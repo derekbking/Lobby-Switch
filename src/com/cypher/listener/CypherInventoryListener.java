@@ -26,9 +26,9 @@ public class CypherInventoryListener implements Listener {
                     Player player = (Player)event.getWhoClicked();
                     String server = "";
                     if (itemMeta.getDisplayName().equals("Lobby 1")) {
-                        server = "Lobby 1";
+                        server = "lobby1";
                     } else if (itemMeta.getDisplayName().equals("Lobby 2")) {
-                        server = "Lobby 2";
+                        server = "lobby2";
                     }
                     if(!server.equals("")) {
                         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
