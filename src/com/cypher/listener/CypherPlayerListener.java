@@ -34,7 +34,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getPlayer().getItemInHand().getType() == LobbySwitch.p.getFileConfig().getItemStack("ItemStack").getType()) {
-            Inventory inventory = Bukkit.createInventory(event.getPlayer(), 9);
+            Inventory inventory = Bukkit.createInventory(null, 9, LobbySwitch.p.getFileConfig().getString("InventoryName"));
 
             for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
                 String[] split = string.split(":");
@@ -47,7 +47,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
                 ItemStack itemStack = new ItemStack(Material.valueOf(split[0]), Integer.valueOf(split[1]));
                 ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setDisplayName(split[2]);
+                itemMeta.setDisplayName("\247" + split[4] + split[2]);
                 itemStack.setItemMeta(itemMeta);
 
                 inventory.addItem(itemStack);

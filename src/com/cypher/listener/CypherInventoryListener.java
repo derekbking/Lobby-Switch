@@ -29,7 +29,7 @@ public class CypherInventoryListener implements Listener {
                             String[] split = string.split(":");
                             ItemStack currentItemStack = new ItemStack(Material.valueOf(split[0]), Integer.valueOf(split[1]));
                             ItemMeta currentItemMeta = itemStack.getItemMeta();
-                            currentItemMeta.setDisplayName(split[2]);
+                            currentItemMeta.setDisplayName("\247" + split[4] + split[2]);
                             currentItemStack.setItemMeta(currentItemMeta);
 
                             if (itemStack.getType() == currentItemStack.getType()) {

@@ -1,4 +1,5 @@
 InventoryRows: 1
+InventoryName: Server Selector
 ItemStack:
   ==: org.bukkit.inventory.ItemStack
   type: COMPASS
@@ -7,5 +8,5 @@ ItemStack:
     meta-type: UNSPECIFIC
     display-name: "\xa74Server Selector"
 Servers:
-- PAPER:1:Lobby 1:lobby1
-- PAPER:1:Lobby 2:lobby2
+- PAPER:1:Lobby 1:lobby1:a
+- PAPER:1:Lobby 2:lobby2:a
