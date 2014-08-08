@@ -1,4 +1,4 @@
-package com.cypher.listener;
+package com.cypher.listeners;
 
 import com.cypher.LobbySwitch;
 import com.google.common.io.ByteArrayDataInput;
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 /**
  * Created by Derek on 8/5/2014.
+ * Time: 3:49 PM
  */
 public class CypherPlayerListener implements Listener, PluginMessageListener {
 
@@ -38,7 +39,6 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
             for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
                 String[] split = string.split(":");
-                ArrayList<String> itemLore = new ArrayList<String>();
                 ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
                 byteArrayDataOutput.writeUTF("PlayerCount");

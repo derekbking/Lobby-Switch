@@ -1,4 +1,4 @@
-package com.cypher.listener;
+package com.cypher.listeners;
 
 import com.cypher.LobbySwitch;
 import com.google.common.io.ByteArrayDataOutput;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Derek on 8/5/2014.
+ * Time: 3:46 PM
  */
 public class CypherInventoryListener implements Listener {
 

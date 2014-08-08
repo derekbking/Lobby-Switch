@@ -1,7 +1,7 @@
 package com.cypher;
 
-import com.cypher.listener.CypherInventoryListener;
-import com.cypher.listener.CypherPlayerListener;
+import com.cypher.listeners.CypherInventoryListener;
+import com.cypher.listeners.CypherPlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
@@ -10,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Created by Derek on 8/5/2014.
+ * Time: 3:45 PM
  */
 public class LobbySwitch extends JavaPlugin {
 
