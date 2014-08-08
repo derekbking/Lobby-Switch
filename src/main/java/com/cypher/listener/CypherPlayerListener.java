@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by Derek on 8/5/2014.
@@ -40,7 +41,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
                 ArrayList<String> itemLore = new ArrayList<String>();
                 ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
-                byteArrayDataOutput.writeUTF("PlayerList");
+                byteArrayDataOutput.writeUTF("PlayerCount");
                 byteArrayDataOutput.writeUTF(split[3]);
                 event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
 
@@ -64,26 +65,17 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subChannel = in.readUTF();
         String server = in.readUTF();
-        String[] playerList = in.readUTF().split(", ");
-
+        int playerCount = in.readInt();
 
         Inventory inventory = player.getOpenInventory().getTopInventory();
         for (ItemStack itemStack : inventory.getContents()) {
             if (itemStack != null) {
-                ArrayList<String> lorePlayers = new ArrayList<String>();
-                for (String string : playerList) {
-                    if (!string.equals("")) {
-                        lorePlayers.add(string);
-                    }
-                }
                 ItemMeta itemMeta = itemStack.getItemMeta();
 
                 if (itemMeta.getDisplayName().split(":").length > 1) {
                     if (itemMeta.getDisplayName().split(":")[1].equals(server)) {
                         itemMeta.setDisplayName(itemMeta.getDisplayName().split(":")[0]);
-                        if (!lorePlayers.isEmpty()) {
-                            itemMeta.setLore(lorePlayers);
-                        }
+                        itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
                         itemStack.setItemMeta(itemMeta);
                     }
                 }
