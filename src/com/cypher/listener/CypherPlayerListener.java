@@ -17,7 +17,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by Derek on 8/5/2014.
@@ -47,7 +46,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
                 ItemStack itemStack = new ItemStack(Material.valueOf(split[0]), Integer.valueOf(split[1]));
                 ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setDisplayName("\247" + split[4] + split[2]);
+                itemMeta.setDisplayName("\247" + split[4] + split[2] + ":" + split[3]);
                 itemStack.setItemMeta(itemMeta);
 
                 inventory.addItem(itemStack);
@@ -67,18 +66,26 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
         String server = in.readUTF();
         String[] playerList = in.readUTF().split(", ");
 
+
         Inventory inventory = player.getOpenInventory().getTopInventory();
-        for(ItemStack itemStack : inventory.getContents()) {
-            if(itemStack != null) {
+        for (ItemStack itemStack : inventory.getContents()) {
+            if (itemStack != null) {
                 ArrayList<String> lorePlayers = new ArrayList<String>();
-                for(String string : playerList) {
-                    lorePlayers.add(string);
+                for (String string : playerList) {
+                    if (!string.equals("")) {
+                        lorePlayers.add(string);
+                    }
                 }
                 ItemMeta itemMeta = itemStack.getItemMeta();
 
-                if(itemMeta.getDisplayName().equals(server)) {
-                    itemMeta.setLore(lorePlayers);
-                    itemStack.setItemMeta(itemMeta);
+                if (itemMeta.getDisplayName().split(":").length > 1) {
+                    if (itemMeta.getDisplayName().split(":")[1].equals(server)) {
+                        itemMeta.setDisplayName(itemMeta.getDisplayName().split(":")[0]);
+                        if (!lorePlayers.isEmpty()) {
+                            itemMeta.setLore(lorePlayers);
+                        }
+                        itemStack.setItemMeta(itemMeta);
+                    }
                 }
             }
         }
