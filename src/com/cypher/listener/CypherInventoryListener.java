@@ -11,6 +11,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+
 /**
  * Created by Derek on 8/5/2014.
  */
@@ -18,25 +20,32 @@ public class CypherInventoryListener implements Listener {
 
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
-        ItemStack itemStack = event.getInventory().getItem(event.getSlot());
-        if(itemStack != null) {
-            if(itemStack.getType() == Material.PAPER) {
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                if(event.getWhoClicked() instanceof Player) {
-                    Player player = (Player)event.getWhoClicked();
-                    String server = "";
-                    if (itemMeta.getDisplayName().equals("Lobby 1")) {
-                        server = "lobby1";
-                    } else if (itemMeta.getDisplayName().equals("Lobby 2")) {
-                        server = "lobby2";
-                    }
-                    if(!server.equals("")) {
-                        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+        if (event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory()) {
+            if (event.getInventory().getSize() >= event.getSlot() && event.getSlot() >= 0) {
+                ItemStack itemStack = event.getInventory().getItem(event.getSlot());
+                if (itemStack != null) {
+                    if (event.getWhoClicked() instanceof Player) {
+                        for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
+                            String[] split = string.split(":");
+                            ItemStack currentItemStack = new ItemStack(Material.valueOf(split[0]), Integer.valueOf(split[1]));
+                            ItemMeta currentItemMeta = itemStack.getItemMeta();
+                            currentItemMeta.setDisplayName(split[2]);
+                            currentItemStack.setItemMeta(currentItemMeta);
 
-                        byteArrayDataOutput.writeUTF("Connect");
-                        byteArrayDataOutput.writeUTF(server);
-                        player.sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
-                        event.setCancelled(true);
+                            if (itemStack.getType() == currentItemStack.getType()) {
+                                ItemMeta itemMeta = itemStack.getItemMeta();
+                                Player player = (Player) event.getWhoClicked();
+
+                                if (itemMeta.getDisplayName().equals(currentItemMeta.getDisplayName())) {
+                                    ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+
+                                    byteArrayDataOutput.writeUTF("Connect");
+                                    byteArrayDataOutput.writeUTF(split[3]);
+                                    player.sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
+                                    event.setCancelled(true);
+                                }
+                            }
+                        }
                     }
                 }
             }

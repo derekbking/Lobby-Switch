@@ -3,6 +3,7 @@ package com.cypher;
 import com.cypher.listener.CypherInventoryListener;
 import com.cypher.listener.CypherPlayerListener;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,12 +14,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class LobbySwitch extends JavaPlugin {
 
     public static LobbySwitch p;
+    private FileConfiguration config;
 
     @Override
     public void onEnable() {
         p = this;
+        loadConfig();
         registerListener(Bukkit.getPluginManager());
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new CypherPlayerListener());
+    }
+
+    public FileConfiguration getFileConfig() {
+        return config;
     }
 
     private void registerListener(PluginManager pluginManager) {
@@ -29,5 +37,12 @@ public class LobbySwitch extends JavaPlugin {
 
         pluginManager.registerEvents(inventoryListener, this);
         pluginManager.registerEvents(playerListener, this);
+    }
+
+    private void loadConfig() {
+        this.getConfig().options().copyDefaults(true);
+        this.saveConfig();
+        config = this.getConfig();
+        this.saveConfig();
     }
 }
