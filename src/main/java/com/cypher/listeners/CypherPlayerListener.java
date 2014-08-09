@@ -50,7 +50,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
                 itemMeta.setDisplayName("\247" + split[4] + split[2] + ":" + split[3]);
                 itemStack.setItemMeta(itemMeta);
 
-                inventory.addItem(itemStack);
+                inventory.setItem(Integer.valueOf(split[5]) - 1, itemStack);
             }
             event.getPlayer().openInventory(inventory);
         }

@@ -42,9 +42,9 @@ public class LobbySwitch extends JavaPlugin {
     }
 
     private void loadConfig() {
-        this.getConfig().options().copyDefaults(true);
-        this.saveConfig();
-        config = this.getConfig();
-        this.saveConfig();
+        new ConfigUpdater(getConfig()).update();
+        getConfig().options().copyDefaults(true);
+        config = getConfig();
+        saveConfig();
     }
 }
