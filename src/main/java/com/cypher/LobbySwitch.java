@@ -24,6 +24,7 @@ public class LobbySwitch extends JavaPlugin {
         registerListener(Bukkit.getPluginManager());
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new CypherPlayerListener());
+        CommandManager.registerCommands();
     }
 
     public FileConfiguration getFileConfig() {
