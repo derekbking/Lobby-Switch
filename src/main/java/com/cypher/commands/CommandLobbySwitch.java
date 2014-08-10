@@ -17,6 +17,7 @@ public class CommandLobbySwitch implements TabExecutor {
         {
             add("add");
             add("list");
+            add("remove");
             add("version");
         }
     };
@@ -51,8 +52,42 @@ public class CommandLobbySwitch implements TabExecutor {
                     default:
                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format");
                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list:l>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version:v>");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>");
+                        return true;
+                }
+            case 2:
+                switch (args[0].toLowerCase()) {
+                    case "remove":
+                    case "r":
+                        try {
+                            String toRemove = "";
+                            for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
+                                String[] split = string.split(":");
+                                if (Integer.valueOf(split[5]) == Integer.parseInt(args[1])) {
+                                    toRemove = string;
+                                }
+                            }
+                            if (!toRemove.equals("")) {
+                                LobbySwitch.p.getFileConfig().set("Servers", LobbySwitch.p.getFileConfig().getList("Servers").remove(toRemove));
+                                LobbySwitch.p.saveConfig();
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Successfully removed server in slot " + ChatColor.GRAY + args[1] + ChatColor.RED + ".");
+                            } else {
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "No server found in slot " + ChatColor.GRAY + args[1] + ChatColor.RED + ".");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
+                            }
+                        } catch (NumberFormatException e) {
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[1] + ChatColor.RED + "\"" + " is not a valid integer.");
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
+                        }
+                        return true;
+                    default:
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>");
                         return true;
                 }
             default:
@@ -98,6 +133,14 @@ public class CommandLobbySwitch implements TabExecutor {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getFileConfig().getInt("InventoryRows") * 9 + ChatColor.RED + ".");
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
+                                }
+                                for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
+                                    String[] split = string.split(":");
+                                    if (slot == Integer.valueOf(split[5])) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number " + ChatColor.GRAY + slot + ChatColor.RED + " is already being used.");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                        return true;
+                                    }
                                 }
                             } catch (NumberFormatException e) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
@@ -161,8 +204,9 @@ public class CommandLobbySwitch implements TabExecutor {
                 }
                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format");
                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list:l>");
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version:v>");
+                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>");
+                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
+                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>");
         }
         return true;
     }
@@ -186,6 +230,18 @@ public class CommandLobbySwitch implements TabExecutor {
                     }
                 }
             }
+            if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("r")) {
+                ArrayList<Integer> used = new ArrayList<Integer>();
+                for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
+                    String[] split = string.split(":");
+                    used.add(Integer.valueOf(split[5]));
+                }
+                for (Integer integer : used) {
+                    if (String.valueOf(integer).toLowerCase().startsWith(search)) {
+                        matches.add(String.valueOf(integer));
+                    }
+                }
+            }
         }
         if (args.length == 3) {
             if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
@@ -198,8 +254,13 @@ public class CommandLobbySwitch implements TabExecutor {
         }
         if (args.length == 4) {
             if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
+                ArrayList<Integer> used = new ArrayList<Integer>();
+                for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
+                    String[] split = string.split(":");
+                    used.add(Integer.valueOf(split[5]));
+                }
                 for (int i = 1; LobbySwitch.p.getFileConfig().getInt("InventoryRows") * 9 >= i; i++) {
-                    if (String.valueOf(i).toLowerCase().startsWith(search)) {
+                    if (String.valueOf(i).toLowerCase().startsWith(search) && !used.contains(i)) {
                         matches.add(String.valueOf(i));
                     }
                 }
