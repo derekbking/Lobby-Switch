@@ -26,7 +26,16 @@ import java.util.Arrays;
 public class CypherPlayerListener implements Listener, PluginMessageListener {
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerJoin(final PlayerJoinEvent event) {
+        LobbySwitch.p.getServer().getScheduler().scheduleSyncDelayedTask(LobbySwitch.p, new Runnable() {
+            @Override
+            public void run() {
+                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+                byteArrayDataOutput.writeUTF("GetServers");
+                event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
+            }
+        }, 20);
+
         if (!event.getPlayer().getInventory().contains(LobbySwitch.p.getFileConfig().getItemStack("ItemStack"))) {
             event.getPlayer().getInventory().addItem(LobbySwitch.p.getFileConfig().getItemStack("ItemStack"));
         }
@@ -64,22 +73,28 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
         ByteArrayDataInput in = ByteStreams.newDataInput(message);
         String subChannel = in.readUTF();
-        String server = in.readUTF();
-        int playerCount = in.readInt();
 
-        Inventory inventory = player.getOpenInventory().getTopInventory();
-        for (ItemStack itemStack : inventory.getContents()) {
-            if (itemStack != null) {
-                ItemMeta itemMeta = itemStack.getItemMeta();
+        if (subChannel.equals("PlayerCount")) {
+            String server = in.readUTF();
+            int playerCount = in.readInt();
+            Inventory inventory = player.getOpenInventory().getTopInventory();
+            for (ItemStack itemStack : inventory.getContents()) {
+                if (itemStack != null) {
+                    ItemMeta itemMeta = itemStack.getItemMeta();
 
-                if (itemMeta.getDisplayName().split(":").length > 1) {
-                    if (itemMeta.getDisplayName().split(":")[1].equals(server)) {
-                        itemMeta.setDisplayName(itemMeta.getDisplayName().split(":")[0]);
-                        itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
-                        itemStack.setItemMeta(itemMeta);
+                    if (itemMeta.getDisplayName().split(":").length > 1) {
+                        if (itemMeta.getDisplayName().split(":")[1].equals(server)) {
+                            itemMeta.setDisplayName(itemMeta.getDisplayName().split(":")[0]);
+                            itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
+                            itemStack.setItemMeta(itemMeta);
+                        }
                     }
                 }
             }
+        }
+
+        if (subChannel.equals("GetServers")) {
+            LobbySwitch.p.setServers(new ArrayList(Arrays.asList(in.readUTF().split(", "))));
         }
     }
 }
