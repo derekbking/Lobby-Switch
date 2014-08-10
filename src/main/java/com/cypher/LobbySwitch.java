@@ -8,6 +8,8 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+
 /**
  * Created by Derek on 8/5/2014.
  * Time: 3:45 PM
@@ -16,6 +18,7 @@ public class LobbySwitch extends JavaPlugin {
 
     public static LobbySwitch p;
     private FileConfiguration config;
+    private ArrayList<String> servers;
 
     @Override
     public void onEnable() {
@@ -29,6 +32,14 @@ public class LobbySwitch extends JavaPlugin {
 
     public FileConfiguration getFileConfig() {
         return config;
+    }
+
+    public ArrayList<String> getServers() {
+        return servers;
+    }
+
+    public void setServers(ArrayList<String> servers) {
+        this.servers = servers;
     }
 
     private void registerListener(PluginManager pluginManager) {
