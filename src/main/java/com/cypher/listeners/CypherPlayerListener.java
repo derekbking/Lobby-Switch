@@ -1,11 +1,10 @@
 package com.cypher.listeners;
 
 import com.cypher.LobbySwitch;
+import com.cypher.ServerItem;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -36,32 +35,30 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
             }
         }, 20);
 
-        if (!event.getPlayer().getInventory().contains(LobbySwitch.p.getFileConfig().getItemStack("ItemStack"))) {
-            event.getPlayer().getInventory().addItem(LobbySwitch.p.getFileConfig().getItemStack("ItemStack"));
+        if (!event.getPlayer().getInventory().contains(LobbySwitch.p.getConfigManager().getSelector())) {
+            event.getPlayer().getInventory().addItem(LobbySwitch.p.getConfigManager().getSelector());
         }
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (event.getPlayer().getItemInHand().getType() == LobbySwitch.p.getFileConfig().getItemStack("ItemStack").getType()) {
-            Inventory inventory = Bukkit.createInventory(null, 9, LobbySwitch.p.getFileConfig().getString("InventoryName"));
+        ItemStack itemStack = event.getPlayer().getItemInHand();
+        if (itemStack.getType() == LobbySwitch.p.getConfigManager().getSelector().getType()) {
+            if (itemStack.getItemMeta().getDisplayName().equals(LobbySwitch.p.getConfigManager().getSelector().getItemMeta().getDisplayName())) {
+                Inventory inventory = LobbySwitch.p.getConfigManager().getInventory();
 
-            for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
-                String[] split = string.split(":");
-                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+                for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+                    ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
+                    ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
-                byteArrayDataOutput.writeUTF("PlayerCount");
-                byteArrayDataOutput.writeUTF(split[3]);
-                event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
+                    byteArrayDataOutput.writeUTF("PlayerCount");
+                    byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
+                    event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
 
-                ItemStack itemStack = new ItemStack(Material.valueOf(split[0]), Integer.valueOf(split[1]));
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.setDisplayName("\247" + split[4] + split[2] + ":" + split[3]);
-                itemStack.setItemMeta(itemMeta);
-
-                inventory.setItem(Integer.valueOf(split[5]) - 1, itemStack);
+                    inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
+                }
+                event.getPlayer().openInventory(inventory);
             }
-            event.getPlayer().openInventory(inventory);
         }
     }
 
@@ -78,17 +75,14 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
             String server = in.readUTF();
             int playerCount = in.readInt();
             Inventory inventory = player.getOpenInventory().getTopInventory();
-            for (ItemStack itemStack : inventory.getContents()) {
-                if (itemStack != null) {
-                    ItemMeta itemMeta = itemStack.getItemMeta();
+            for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+                ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
 
-                    if (itemMeta.getDisplayName().split(":").length > 1) {
-                        if (itemMeta.getDisplayName().split(":")[1].equals(server)) {
-                            itemMeta.setDisplayName(itemMeta.getDisplayName().split(":")[0]);
-                            itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
-                            itemStack.setItemMeta(itemMeta);
-                        }
-                    }
+                if (serverItem.getTargetServer().equals(server)) {
+                    ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
+                    ItemMeta itemMeta = itemStack.getItemMeta();
+                    itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
+                    itemStack.setItemMeta(itemMeta);
                 }
             }
         }

@@ -1,6 +1,7 @@
 package com.cypher.commands;
 
 import com.cypher.LobbySwitch;
+import com.cypher.ServerItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -16,9 +17,19 @@ public class CommandLobbySwitch implements TabExecutor {
     private final List<String> arguments = new ArrayList<String>() {
         {
             add("add");
+            add("edit");
             add("list");
             add("remove");
             add("version");
+        }
+    };
+
+    private final List<String> editSubArguments = new ArrayList<String>() {
+        {
+            add("amount");
+            add("material");
+            add("slot");
+            add("target");
         }
     };
 
@@ -35,14 +46,13 @@ public class CommandLobbySwitch implements TabExecutor {
                     case "list":
                     case "l":
                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Server list");
-                        for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
-                            String[] split = string.split(":");
-                            commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.GRAY + split[2]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "ItemStack: " + ChatColor.GRAY + split[0]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + split[1]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Color: " + ChatColor.GRAY + ChatColor.getByChar(split[4]).name());
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Slot: " + ChatColor.GRAY + split[5]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Target: " + ChatColor.GRAY + split[3]);
+                        for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+                            ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
+                            commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Slot " + ChatColor.GRAY + string);
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + serverItem.getAmount());
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Name: " + ChatColor.GRAY + serverItem.getDisplayName());
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Material: " + ChatColor.GRAY + serverItem.getMaterial());
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Target: " + ChatColor.GRAY + serverItem.getTargetServer());
                         }
                         return true;
                     case "version":
@@ -50,11 +60,7 @@ public class CommandLobbySwitch implements TabExecutor {
                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Lobby Switch version " + ChatColor.GRAY + LobbySwitch.p.getDescription().getVersion() + ChatColor.RED + ".");
                         return true;
                     default:
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>");
+                        commandSender.sendMessage(getInvalidFormat());
                         return true;
                 }
             case 2:
@@ -62,16 +68,7 @@ public class CommandLobbySwitch implements TabExecutor {
                     case "remove":
                     case "r":
                         try {
-                            String toRemove = "";
-                            for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
-                                String[] split = string.split(":");
-                                if (Integer.valueOf(split[5]) == Integer.parseInt(args[1])) {
-                                    toRemove = string;
-                                }
-                            }
-                            if (!toRemove.equals("")) {
-                                LobbySwitch.p.getFileConfig().set("Servers", LobbySwitch.p.getFileConfig().getList("Servers").remove(toRemove));
-                                LobbySwitch.p.saveConfig();
+                            if (LobbySwitch.p.getConfigManager().removeSlot(Integer.parseInt(args[1]))) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Successfully removed server in slot " + ChatColor.GRAY + args[1] + ChatColor.RED + ".");
                             } else {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "No server found in slot " + ChatColor.GRAY + args[1] + ChatColor.RED + ".");
@@ -83,15 +80,123 @@ public class CommandLobbySwitch implements TabExecutor {
                         }
                         return true;
                     default:
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
-                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>");
+                        commandSender.sendMessage(getInvalidFormat());
+                        return true;
+                }
+            case 4:
+                switch (args[0].toLowerCase()) {
+                    case "edit":
+                    case "e":
+                        int slot;
+                        try {
+                            slot = Integer.parseInt(args[1]);
+                            if (slot < 1) {
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch ------------------------------------------------");
+                                return true;
+                            }
+                            if (slot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getConfigManager().getInventory().getSize() + ChatColor.RED + ".");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch ------------------------------------------------");
+                                return true;
+                            }
+                        } catch (NumberFormatException e) {
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch ------------------------------------------------");
+                            return true;
+                        }
+                        ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(slot);
+                        switch (args[2].toLowerCase()) {
+                            case "amount":
+                                int amount = Integer.parseInt(args[3]);
+                                try {
+                                    if (amount > 64) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount can't exceed " + ChatColor.GRAY + "64" + ChatColor.RED + ".");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
+                                        return true;
+                                    }
+                                    if (amount < 1) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
+                                        return true;
+                                    }
+                                } catch (NumberFormatException e) {
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[2] + ChatColor.RED + "\"" + " is not a valid integer.");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
+                                    return true;
+                                }
+                                serverItem.setAmount(amount);
+                                LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount has been changed to " + ChatColor.GRAY + amount + ChatColor.RED + ".");
+                                return true;
+                            case "material":
+                                Material material;
+                                try {
+                                    material = Material.getMaterial(Integer.parseInt(args[3]));
+                                } catch (NumberFormatException e) {
+                                    try {
+                                        material = Material.valueOf(args[3]);
+                                    } catch (IllegalArgumentException exception) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid item name or id.");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <New Material>");
+                                        return true;
+                                    }
+                                }
+                                serverItem.setMaterial(material);
+                                LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The material has been changed to " + ChatColor.GRAY + material.name() + ChatColor.RED + ".");
+                                return true;
+                            case "slot":
+                                int newSlot;
+                                try {
+                                    newSlot = Integer.parseInt(args[3]);
+                                    if (newSlot < 1) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> slot <New Slot>");
+                                        return true;
+                                    }
+                                    if (newSlot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getConfigManager().getInventory().getSize() + ChatColor.RED + ".");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> slot <New Slot>");
+                                        return true;
+                                    }
+                                    if (slot == newSlot) {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The new slot number can not be equal to the old slot number.");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> slot <New Slot>");
+                                        return true;
+                                    }
+                                    LobbySwitch.p.getConfigManager().removeSlot(slot);
+                                    LobbySwitch.p.getConfigManager().saveServerItem(serverItem, newSlot);
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Moved the item in slot " + ChatColor.GRAY + slot + ChatColor.RED + " to slot " + ChatColor.GRAY + newSlot + ChatColor.RED + ".");
+                                } catch (NumberFormatException e) {
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> slot <New Slot>");
+                                    return true;
+                                }
+                                return true;
+                            case "target":
+                                String targetServer;
+                                if (LobbySwitch.p.getServers().contains(args[3])) {
+                                    targetServer = args[3];
+                                } else {
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[4] + ChatColor.RED + "\"" + " is not a valid target server.");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> target <New Target>");
+                                    return true;
+                                }
+                                serverItem.setTargetServer(targetServer);
+                                LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The target has been changed to " + ChatColor.GRAY + targetServer + ChatColor.RED + ".");
+                                return true;
+                            default:
+                                commandSender.sendMessage(getInvalidFormat());
+                                return true;
+                        }
+                    default:
+                        commandSender.sendMessage(getInvalidFormat());
                         return true;
                 }
             default:
-                if (args.length > 6) {
+                if (args.length > 5) {
                     if (args[0].equals("add") || args[0].equals("a")) {
                         ItemStack itemStack;
                         int slot;
@@ -129,18 +234,15 @@ public class CommandLobbySwitch implements TabExecutor {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
                                 }
-                                if (slot > LobbySwitch.p.getFileConfig().getInt("InventoryRows") * 9) {
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getFileConfig().getInt("InventoryRows") * 9 + ChatColor.RED + ".");
+                                if (slot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getConfigManager().getInventory().getSize() + ChatColor.RED + ".");
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
                                 }
-                                for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
-                                    String[] split = string.split(":");
-                                    if (slot == Integer.valueOf(split[5])) {
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number " + ChatColor.GRAY + slot + ChatColor.RED + " is already being used.");
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                                        return true;
-                                    }
+                                if (LobbySwitch.p.getConfigManager().getSlots().contains(String.valueOf(slot))) {
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number " + ChatColor.GRAY + slot + ChatColor.RED + " is already being used.");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                    return true;
                                 }
                             } catch (NumberFormatException e) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
@@ -154,45 +256,22 @@ public class CommandLobbySwitch implements TabExecutor {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
-                            try {
-                                color = String.valueOf(ChatColor.valueOf(args[5]).getChar());
-                            } catch (IllegalArgumentException e) {
-                                if (args[5].length() == 1) {
-                                    try {
-                                        color = String.valueOf(ChatColor.getByChar(args[5]).getChar());
-                                    } catch (NullPointerException exception) {
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[5] + ChatColor.RED + "\"" + " is not a valid chat color.");
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                                        return true;
-                                    }
-                                } else {
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[5] + ChatColor.RED + "\"" + " is not a valid chat color.");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                                    return true;
-                                }
-                            }
                             StringBuilder stringBuilder = new StringBuilder();
 
-                            for (int i = 6; args.length > i; i++) {
-                                if (i != 6) {
+                            for (int i = 5; args.length > i; i++) {
+                                if (i != 5) {
                                     stringBuilder.append(" ");
                                 }
                                 stringBuilder.append(args[i]);
                             }
-                            displayName = stringBuilder.toString();
-                            String serverString = itemStack.getType().name() + ":" + itemStack.getAmount() + ":" + displayName + ":" + targetServer + ":" + color + ":" + slot;
-                            ArrayList<String> arrayList = (ArrayList) LobbySwitch.p.getFileConfig().getList("Servers");
-                            arrayList.add(serverString);
-                            LobbySwitch.p.getFileConfig().set("Servers", arrayList);
-                            LobbySwitch.p.saveConfig();
-                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Added new server");
-                            String[] split = serverString.split(":");
-                            commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.GRAY + split[2]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "ItemStack: " + ChatColor.GRAY + split[0]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + split[1]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Color: " + ChatColor.GRAY + ChatColor.getByChar(split[4]).name());
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Slot: " + ChatColor.GRAY + split[5]);
-                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Target: " + ChatColor.GRAY + split[3]);
+                            displayName = stringBuilder.toString().replace("&", "\247");
+                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getAmount(), displayName, targetServer);
+                            LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+                            commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Slot " + ChatColor.GRAY + slot);
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + serverItem.getAmount());
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Name: " + ChatColor.GRAY + serverItem.getDisplayName());
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Material: " + ChatColor.GRAY + serverItem.getMaterial());
+                            commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Target: " + ChatColor.GRAY + serverItem.getTargetServer());
 
                         } catch (NumberFormatException e) {
                             commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[2] + ChatColor.RED + "\"" + " is not a valid integer.");
@@ -202,11 +281,7 @@ public class CommandLobbySwitch implements TabExecutor {
                         return true;
                     }
                 }
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format");
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>");
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>");
-                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>");
+                commandSender.sendMessage(getInvalidFormat());
         }
         return true;
     }
@@ -230,17 +305,8 @@ public class CommandLobbySwitch implements TabExecutor {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("r")) {
-                ArrayList<Integer> used = new ArrayList<Integer>();
-                for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
-                    String[] split = string.split(":");
-                    used.add(Integer.valueOf(split[5]));
-                }
-                for (Integer integer : used) {
-                    if (String.valueOf(integer).toLowerCase().startsWith(search)) {
-                        matches.add(String.valueOf(integer));
-                    }
-                }
+            if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("edit") || args[0].equals("e")) {
+                matches.addAll(LobbySwitch.p.getConfigManager().getSlots());
             }
         }
         if (args.length == 3) {
@@ -251,17 +317,51 @@ public class CommandLobbySwitch implements TabExecutor {
                     }
                 }
             }
+            if (args[0].equalsIgnoreCase("edit") || args[0].equals("e")) {
+                for (String argument : editSubArguments) {
+                    if (argument.toLowerCase().startsWith(search)) {
+                        matches.add(argument);
+                    }
+                }
+            }
         }
         if (args.length == 4) {
             if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
-                ArrayList<Integer> used = new ArrayList<Integer>();
-                for (String string : (ArrayList<String>) LobbySwitch.p.getFileConfig().getList("Servers")) {
-                    String[] split = string.split(":");
-                    used.add(Integer.valueOf(split[5]));
-                }
-                for (int i = 1; LobbySwitch.p.getFileConfig().getInt("InventoryRows") * 9 >= i; i++) {
-                    if (String.valueOf(i).toLowerCase().startsWith(search) && !used.contains(i)) {
+                ArrayList<String> used = new ArrayList<String>(LobbySwitch.p.getConfigManager().getSlots());
+                for (int i = 1; LobbySwitch.p.getConfigManager().getInventory().getSize() >= i; i++) {
+                    if (String.valueOf(i).toLowerCase().startsWith(search) && !used.contains(String.valueOf(i))) {
                         matches.add(String.valueOf(i));
+                    }
+                }
+            }
+            if (args[0].equalsIgnoreCase("edit") || args[0].equals("e")) {
+                if (args[2].equalsIgnoreCase("amount")) {
+                    for (int i = 1; 64 >= i; i++) {
+                        if (String.valueOf(i).toLowerCase().startsWith(search)) {
+                            matches.add(String.valueOf(i));
+                        }
+                    }
+                }
+                if (args[2].equalsIgnoreCase("material")) {
+                    for (Material argument : Material.values()) {
+                        if (argument.name().toLowerCase().startsWith(search)) {
+                            matches.add(argument.name());
+                        }
+                    }
+                }
+                if (args[2].equalsIgnoreCase("slot")) {
+                    ArrayList<String> used = new ArrayList<String>(LobbySwitch.p.getConfigManager().getSlots());
+                    for (int i = 1; LobbySwitch.p.getConfigManager().getInventory().getSize() >= i; i++) {
+                        if (String.valueOf(i).toLowerCase().startsWith(search) && !used.contains(String.valueOf(i))) {
+                            matches.add(String.valueOf(i));
+                        }
+                    }
+                }
+                if (args[2].equalsIgnoreCase("target")) {
+                    for (String string : LobbySwitch.p.getServers()) {
+                        if (string.toLowerCase().startsWith(search)) {
+                            matches.add(string);
+                        }
                     }
                 }
             }
@@ -275,16 +375,16 @@ public class CommandLobbySwitch implements TabExecutor {
                 }
             }
         }
-        if (args.length == 6) {
-            if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
-                for (ChatColor chatColor : ChatColor.values()) {
-                    if (chatColor.name().toLowerCase().startsWith(search)) {
-                        matches.add(chatColor.name());
-                    }
-                }
-            }
-        }
-
         return matches;
+    }
+
+    private String getInvalidFormat() {
+        return
+                ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Material|Slot|Target> <New Amount|New Material|New Slot|New Target>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>";
     }
 }

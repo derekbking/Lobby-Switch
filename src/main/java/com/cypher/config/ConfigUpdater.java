@@ -1,5 +1,6 @@
-package com.cypher;
+package com.cypher.config;
 
+import com.cypher.LobbySwitch;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -35,13 +36,13 @@ public class ConfigUpdater {
                 fromVersion = "0.2.1";
             }
         } else {
-            fromVersion = (String) fileConfiguration.get("Version");
+            fromVersion = fileConfiguration.getString("Version");
         }
 
         if (fromVersion.equals("0.2.1")) {
             ArrayList<String> newServerList = new ArrayList<String>();
             for (int i = 0; i < fileConfiguration.getList("Servers").size(); i++) {
-                String string = (String) fileConfiguration.getList("Servers").get(i);
+                String string = fileConfiguration.getStringList("Servers").get(i);
                 String split = string + ":" + (i + 1);
                 newServerList.add(split);
             }
