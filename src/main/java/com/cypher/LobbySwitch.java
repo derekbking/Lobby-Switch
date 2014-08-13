@@ -61,7 +61,6 @@ public class LobbySwitch extends JavaPlugin {
     }
 
     private void loadConfig() {
-//        getConfig().options().copyDefaults(false);
         new ConfigUpdater(getConfig()).update();
         getConfig().options().copyDefaults(true);
         saveConfig();
