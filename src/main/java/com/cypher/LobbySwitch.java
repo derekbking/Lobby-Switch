@@ -1,6 +1,7 @@
 package com.cypher;
 
 import com.cypher.config.ConfigManager;
+import com.cypher.config.ConfigUpdater;
 import com.cypher.listeners.CypherInventoryListener;
 import com.cypher.listeners.CypherPlayerListener;
 import org.bukkit.Bukkit;
@@ -60,10 +61,10 @@ public class LobbySwitch extends JavaPlugin {
     }
 
     private void loadConfig() {
+//        getConfig().options().copyDefaults(false);
+        new ConfigUpdater(getConfig()).update();
         getConfig().options().copyDefaults(true);
         saveConfig();
-//        new ConfigUpdater(getConfig()).update();
         config = getConfig();
-        saveConfig();
     }
 }

@@ -1,9 +1,13 @@
 package com.cypher.config;
 
 import com.cypher.LobbySwitch;
+import com.cypher.ServerItem;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Derek on 8/9/2014.
@@ -19,24 +23,30 @@ public class ConfigUpdater {
     }
 
     public void update() {
-        if (fileConfiguration.get("Version").equals("DEFAULT")) {
-            if (!fileConfiguration.getList("Servers").isEmpty()) {
-                ArrayList<String> arrayList = (ArrayList) fileConfiguration.getList("Servers");
-                String string = arrayList.get(0);
-                String[] split = string.split(":");
+        ArrayList<String> keySet = new ArrayList<>(fileConfiguration.getConfigurationSection("").getKeys(false));
+        if (keySet.isEmpty()) {
+            fileConfiguration.set(ConfigPaths.VERSION, LobbySwitch.p.getDescription().getVersion());
+            LobbySwitch.p.saveConfig();
+            return;
+        }
+        if (keySet.contains("Servers")) {
+            ArrayList<String> servers = (ArrayList) fileConfiguration.getList("Servers");
 
-                if (split.length == 5) {
-                    fromVersion = "0.2.1";
-                } else if (split.length == 6) {
-                    fromVersion = "0.2.2";
-                } else {
-                    fromVersion = "Unknown";
-                }
-            } else {
+            String string = servers.get(0);
+            String[] split = string.split(":");
+
+            if (split.length == 5) {
                 fromVersion = "0.2.1";
+            } else if (split.length == 6) {
+                fromVersion = "0.2.2";
+            } else {
+                fromVersion = "Unknown";
             }
         } else {
-            fromVersion = fileConfiguration.getString("Version");
+            fromVersion = "0.3";
+        }
+        if (keySet.contains(ConfigPaths.SERVER_SLOTS)) {
+            fromVersion = "0.3.1";
         }
 
         if (fromVersion.equals("0.2.1")) {
@@ -47,8 +57,40 @@ public class ConfigUpdater {
                 newServerList.add(split);
             }
             fileConfiguration.set("Servers", newServerList);
+            fromVersion = "0.2.2";
         }
-        fileConfiguration.set("Version", LobbySwitch.p.getDescription().getVersion());
+        if (fromVersion.equals("0.2.2") || fromVersion.equals("0.3")) {
+            int rows = fileConfiguration.getInt("InventoryRows");
+            String inventory_name = fileConfiguration.getString("InventoryName");
+            Material material = fileConfiguration.getItemStack("ItemStack").getType();
+            String selector_name = fileConfiguration.getItemStack("ItemStack").getItemMeta().getDisplayName();
+            HashMap<Integer, ServerItem> serverItems = new HashMap<Integer, ServerItem>();
+            ArrayList<String> serverList = new ArrayList<String>(fileConfiguration.getStringList("Servers"));
+            for (String string : serverList) {
+                String[] split = string.split(":");
+
+                serverItems.put(Integer.parseInt(split[5]), new ServerItem(Material.valueOf(split[0]), Integer.parseInt(split[1]), split[2], split[3]));
+            }
+            String version = fileConfiguration.getString("Version");
+            fileConfiguration.set(ConfigPaths.INVENTORY_ROWS, rows);
+            fileConfiguration.set(ConfigPaths.INVENTORY_NAME, inventory_name);
+            fileConfiguration.set(ConfigPaths.SELECTOR_MATERIAL, material.name());
+            fileConfiguration.set(ConfigPaths.SELECTOR_DISPLAY_NAME, "&4" + ChatColor.stripColor(selector_name));
+            for (Integer slot : serverItems.keySet()) {
+                ServerItem serverItem = serverItems.get(slot);
+                fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_AMOUNT, slot), serverItem.getAmount());
+                fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_DISPLAY_NAME, slot), "&a" + serverItem.getDisplayName());
+                fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_MATERIAL, slot), serverItem.getMaterial().name());
+                fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot), serverItem.getTargetServer());
+            }
+            fileConfiguration.set(ConfigPaths.VERSION, version);
+
+            fileConfiguration.set("InventoryRows", null);
+            fileConfiguration.set("InventoryName", null);
+            fileConfiguration.set("ItemStack", null);
+            fileConfiguration.set("Servers", null);
+        }
+        fileConfiguration.set(ConfigPaths.VERSION, LobbySwitch.p.getDescription().getVersion());
         LobbySwitch.p.saveConfig();
     }
 }

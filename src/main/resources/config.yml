@@ -8,11 +8,11 @@ Server_Slots:
   '1':
     Amount: 1
     Target_Server: lobby1
-    Display_Name: '&cLobby 1'
+    Display_Name: '&aLobby 1'
     Material: PAPER
   '2':
     Amount: 1
     Target_Server: lobby2
-    Display_Name: '&cLobby 2'
+    Display_Name: '&aLobby 2'
     Material: PAPER
 Version: DEFAULT
