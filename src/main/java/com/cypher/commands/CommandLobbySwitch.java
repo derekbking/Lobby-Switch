@@ -449,7 +449,7 @@ public class CommandLobbySwitch implements TabExecutor {
     private String getInvalidFormat() {
         return
                 ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format\n" +
-                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Display Name>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Material|Name|Slot|Target> <New Amount|New Material|New Name|New Slot|New Target>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>\n" +
