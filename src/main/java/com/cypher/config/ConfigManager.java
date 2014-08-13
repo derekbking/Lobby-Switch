@@ -67,7 +67,7 @@ public class ConfigManager {
 
     public boolean removeSlot(int slot) {
         if (getSlots().contains(String.valueOf(slot))) {
-            fileConfiguration.set(ConfigPaths.SERVER_SLOTS, getSlots().remove(slot));
+            fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT, slot), null);
             LobbySwitch.p.saveConfig();
             return true;
         } else {
