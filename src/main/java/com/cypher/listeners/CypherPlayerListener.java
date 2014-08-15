@@ -74,15 +74,18 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
         if (subChannel.equals("PlayerCount")) {
             String server = in.readUTF();
             int playerCount = in.readInt();
-            Inventory inventory = player.getOpenInventory().getTopInventory();
-            for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
-                ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
 
-                if (serverItem.getTargetServer().equals(server)) {
-                    ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
-                    ItemMeta itemMeta = itemStack.getItemMeta();
-                    itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
-                    itemStack.setItemMeta(itemMeta);
+            if (player.getOpenInventory().getTopInventory().getName().equals(LobbySwitch.p.getConfigManager().getInventory().getName())) {
+                Inventory inventory = player.getOpenInventory().getTopInventory();
+                for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+                    ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
+
+                    if (serverItem.getTargetServer().equals(server)) {
+                        ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
+                        ItemMeta itemMeta = itemStack.getItemMeta();
+                        itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
+                        itemStack.setItemMeta(itemMeta);
+                    }
                 }
             }
         }
