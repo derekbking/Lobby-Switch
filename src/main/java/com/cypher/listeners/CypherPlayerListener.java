@@ -8,6 +8,7 @@ import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
@@ -42,22 +43,24 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        ItemStack itemStack = event.getPlayer().getItemInHand();
-        if (itemStack.getType() == LobbySwitch.p.getConfigManager().getSelector().getType()) {
-            if (itemStack.getItemMeta().getDisplayName().equals(LobbySwitch.p.getConfigManager().getSelector().getItemMeta().getDisplayName())) {
-                Inventory inventory = LobbySwitch.p.getConfigManager().getInventory();
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
+            ItemStack itemStack = event.getPlayer().getItemInHand();
+            if (itemStack.getType() == LobbySwitch.p.getConfigManager().getSelector().getType()) {
+                if (itemStack.getItemMeta().getDisplayName().equals(LobbySwitch.p.getConfigManager().getSelector().getItemMeta().getDisplayName())) {
+                    Inventory inventory = LobbySwitch.p.getConfigManager().getInventory();
 
-                for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
-                    ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
-                    ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+                    for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+                        ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
+                        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
-                    byteArrayDataOutput.writeUTF("PlayerCount");
-                    byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
-                    event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
+                        byteArrayDataOutput.writeUTF("PlayerCount");
+                        byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
+                        event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
 
-                    inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
+                        inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
+                    }
+                    event.getPlayer().openInventory(inventory);
                 }
-                event.getPlayer().openInventory(inventory);
             }
         }
     }
