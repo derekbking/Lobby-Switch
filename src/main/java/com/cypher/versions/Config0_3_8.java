@@ -7,7 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
  * Created by Derek on 8/16/2014.
  * Time: 11:45 AM
  */
-public class Config0_3_8 {
+public abstract class Config0_3_8 {
 
     public static FileConfiguration update(FileConfiguration fileConfiguration) {
         for (String string : fileConfiguration.getConfigurationSection(ConfigPaths.SERVER_SLOTS).getKeys(false)) {
