@@ -138,8 +138,15 @@ public class CommandLobbySwitch implements TabExecutor {
                                 return true;
                             case "material":
                                 Material material;
+                                byte metaData;
+                                String[] itemStackSplit = args[3].split(":");
+                                if (itemStackSplit.length > 1) {
+                                    metaData = Byte.valueOf(itemStackSplit[1]);
+                                } else {
+                                    metaData = (byte) 0;
+                                }
                                 try {
-                                    material = Material.getMaterial(Integer.parseInt(args[3]));
+                                    material = Material.getMaterial(Integer.parseInt(itemStackSplit[0]));
                                     if (material == null) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid item name or id.");
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <New Material>");
@@ -147,7 +154,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                     }
                                 } catch (NumberFormatException e) {
                                     try {
-                                        material = Material.valueOf(args[3]);
+                                        material = Material.valueOf(itemStackSplit[0]);
                                     } catch (IllegalArgumentException exception) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid item name or id.");
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <New Material>");
@@ -160,6 +167,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                     return true;
                                 }
                                 serverItem.setMaterial(material);
+                                serverItem.setMetaData(metaData);
                                 LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The material has been changed to " + ChatColor.GRAY + material.name() + ChatColor.RED + ".");
                                 return true;
@@ -265,6 +273,7 @@ public class CommandLobbySwitch implements TabExecutor {
                 if (args.length > 5) {
                     if (args[0].equals("add") || args[0].equals("a")) {
                         ItemStack itemStack;
+                        byte metaData;
                         int slot;
                         String targetServer;
 
@@ -280,11 +289,17 @@ public class CommandLobbySwitch implements TabExecutor {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
+                            String[] itemStackSplit = args[1].split(":");
+                            if (itemStackSplit.length > 1) {
+                                metaData = Byte.valueOf(itemStackSplit[1]);
+                            } else {
+                                metaData = (byte) 0;
+                            }
                             try {
-                                itemStack = new ItemStack(Integer.parseInt(args[1]), amount);
+                                itemStack = new ItemStack(Integer.parseInt(args[1]), amount, metaData);
                             } catch (NumberFormatException e) {
                                 try {
-                                    itemStack = new ItemStack(Material.valueOf(args[1]), amount);
+                                    itemStack = new ItemStack(Material.valueOf(args[1]), amount, metaData);
                                 } catch (IllegalArgumentException exception) {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[1] + ChatColor.RED + "\"" + " is not a valid item name or id.");
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
@@ -333,7 +348,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                 }
                                 stringBuilder.append(args[i]);
                             }
-                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getAmount(), stringBuilder.toString(), targetServer);
+                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getData().getData(), itemStack.getAmount(), stringBuilder.toString(), targetServer);
                             LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                             commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Slot " + ChatColor.GRAY + slot);
                             commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + serverItem.getAmount());

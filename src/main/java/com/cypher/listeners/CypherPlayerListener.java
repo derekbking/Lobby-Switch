@@ -71,30 +71,34 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
             return;
         }
 
-        ByteArrayDataInput in = ByteStreams.newDataInput(message);
-        String subChannel = in.readUTF();
+        try {
+            ByteArrayDataInput in = ByteStreams.newDataInput(message);
+            String subChannel = in.readUTF();
 
-        if (subChannel.equals("PlayerCount")) {
-            String server = in.readUTF();
-            int playerCount = in.readInt();
+            if (subChannel.equals("PlayerCount")) {
+                String server = in.readUTF();
+                int playerCount = in.readInt();
 
-            if (player.getOpenInventory().getTopInventory().getName().equals(LobbySwitch.p.getConfigManager().getInventory().getName())) {
-                Inventory inventory = player.getOpenInventory().getTopInventory();
-                for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
-                    ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
+                if (player.getOpenInventory().getTopInventory().getName().equals(LobbySwitch.p.getConfigManager().getInventory().getName())) {
+                    Inventory inventory = player.getOpenInventory().getTopInventory();
+                    for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+                        ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
 
-                    if (serverItem.getTargetServer().equals(server)) {
-                        ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
-                        ItemMeta itemMeta = itemStack.getItemMeta();
-                        itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
-                        itemStack.setItemMeta(itemMeta);
+                        if (serverItem.getTargetServer().equals(server)) {
+                            ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
+                            ItemMeta itemMeta = itemStack.getItemMeta();
+                            itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
+                            itemStack.setItemMeta(itemMeta);
+                        }
                     }
                 }
             }
-        }
 
-        if (subChannel.equals("GetServers")) {
-            LobbySwitch.p.setServers(new ArrayList(Arrays.asList(in.readUTF().split(", "))));
+
+            if (subChannel.equals("GetServers")) {
+                LobbySwitch.p.setServers(new ArrayList(Arrays.asList(in.readUTF().split(", "))));
+            }
+        } catch (IllegalStateException e) {
         }
     }
 }

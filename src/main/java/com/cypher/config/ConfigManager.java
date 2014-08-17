@@ -42,6 +42,7 @@ public class ConfigManager {
 
     public ServerItem getServerItem(int slot) {
         Material material;
+        byte metaData;
         int amount;
         String displayName;
         String targetServer;
@@ -50,17 +51,23 @@ public class ConfigManager {
             displayName = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_DISPLAY_NAME, slot));
             displayName = displayName.replace("&", "\247");
             material = Material.valueOf(fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_MATERIAL, slot)));
+            if (fileConfiguration.contains(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot))) {
+                metaData = Byte.valueOf(fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot)));
+            } else {
+                metaData = (byte) 0;
+            }
             targetServer = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot));
         } else {
             return null;
         }
-        return new ServerItem(material, amount, displayName, targetServer);
+        return new ServerItem(material, metaData, amount, displayName, targetServer);
     }
 
     public void saveServerItem(ServerItem serverItem, int slot) {
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_AMOUNT, slot), serverItem.getAmount());
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_DISPLAY_NAME, slot), serverItem.getDisplayName());
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_MATERIAL, slot), serverItem.getMaterial().name());
+        fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot), String.valueOf(serverItem.getMetaData()));
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot), serverItem.getTargetServer());
         LobbySwitch.p.saveConfig();
     }

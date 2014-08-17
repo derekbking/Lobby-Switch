@@ -11,19 +11,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ServerItem {
 
     private Material material;
+    private byte metaData;
     private int amount;
     private String displayName;
     private String targetServer;
 
-    public ServerItem(Material material, int amount, String displayName, String targetServer) {
+    public ServerItem(Material material, byte metaData, int amount, String displayName, String targetServer) {
         this.material = material;
+        this.metaData = metaData;
         this.amount = amount;
         this.displayName = displayName;
         this.targetServer = targetServer;
     }
 
     public ItemStack getItemStack() {
-        ItemStack itemStack = new ItemStack(material, amount);
+        ItemStack itemStack = new ItemStack(material, amount, metaData);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(displayName);
         itemStack.setItemMeta(itemMeta);
@@ -36,6 +38,14 @@ public class ServerItem {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public byte getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(byte metaData) {
+        this.metaData = metaData;
     }
 
     public int getAmount() {
