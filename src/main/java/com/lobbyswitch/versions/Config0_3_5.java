@@ -1,7 +1,7 @@
-package com.cypher.versions;
+package com.lobbyswitch.versions;
 
-import com.cypher.ServerItem;
-import com.cypher.config.ConfigPaths;
+import com.lobbyswitch.ServerItem;
+import com.lobbyswitch.config.ConfigPaths;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

@@ -1,9 +1,9 @@
-package com.cypher;
+package com.lobbyswitch;
 
-import com.cypher.config.ConfigManager;
-import com.cypher.config.ConfigUpdater;
-import com.cypher.listeners.CypherInventoryListener;
-import com.cypher.listeners.CypherPlayerListener;
+import com.lobbyswitch.config.ConfigManager;
+import com.lobbyswitch.config.ConfigUpdater;
+import com.lobbyswitch.listeners.CypherInventoryListener;
+import com.lobbyswitch.listeners.CypherPlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.HandlerList;

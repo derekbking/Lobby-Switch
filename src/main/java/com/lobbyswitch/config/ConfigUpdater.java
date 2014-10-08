@@ -1,10 +1,10 @@
-package com.cypher.config;
+package com.lobbyswitch.config;
 
-import com.cypher.LobbySwitch;
-import com.cypher.versions.Config0_2_1;
-import com.cypher.versions.Config0_2_2;
-import com.cypher.versions.Config0_3_5;
-import com.cypher.versions.Config0_3_8;
+import com.lobbyswitch.LobbySwitch;
+import com.lobbyswitch.versions.Config0_2_1;
+import com.lobbyswitch.versions.Config0_2_2;
+import com.lobbyswitch.versions.Config0_3_5;
+import com.lobbyswitch.versions.Config0_3_8;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**

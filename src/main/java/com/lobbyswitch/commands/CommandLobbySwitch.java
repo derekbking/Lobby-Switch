@@ -1,7 +1,7 @@
-package com.cypher.commands;
+package com.lobbyswitch.commands;
 
-import com.cypher.LobbySwitch;
-import com.cypher.ServerItem;
+import com.lobbyswitch.LobbySwitch;
+import com.lobbyswitch.ServerItem;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;

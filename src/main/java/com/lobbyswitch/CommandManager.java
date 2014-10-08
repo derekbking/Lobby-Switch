@@ -1,6 +1,6 @@
-package com.cypher;
+package com.lobbyswitch;
 
-import com.cypher.commands.CommandLobbySwitch;
+import com.lobbyswitch.commands.CommandLobbySwitch;
 import org.bukkit.command.PluginCommand;
 
 /**

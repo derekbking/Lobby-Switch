@@ -1,10 +1,10 @@
-package com.cypher.listeners;
+package com.lobbyswitch.listeners;
 
-import com.cypher.LobbySwitch;
-import com.cypher.ServerItem;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.lobbyswitch.LobbySwitch;
+import com.lobbyswitch.ServerItem;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

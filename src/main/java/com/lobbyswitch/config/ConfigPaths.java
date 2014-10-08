@@ -1,4 +1,4 @@
-package com.cypher.config;
+package com.lobbyswitch.config;
 
 /**
  * Created by Derek on 8/11/2014.

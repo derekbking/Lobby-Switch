@@ -1,7 +1,7 @@
-package com.cypher.config;
+package com.lobbyswitch.config;
 
-import com.cypher.LobbySwitch;
-import com.cypher.ServerItem;
+import com.lobbyswitch.LobbySwitch;
+import com.lobbyswitch.ServerItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

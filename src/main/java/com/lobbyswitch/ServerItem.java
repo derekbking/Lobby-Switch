@@ -1,4 +1,4 @@
-package com.cypher;
+package com.lobbyswitch;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

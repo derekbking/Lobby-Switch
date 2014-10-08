@@ -1,6 +1,6 @@
-package com.cypher.versions;
+package com.lobbyswitch.versions;
 
-import com.cypher.config.ConfigPaths;
+import com.lobbyswitch.config.ConfigPaths;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
