@@ -55,11 +55,9 @@ public abstract class Config0_3_5 {
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.3.6") ||
                     fileConfiguration.get(ConfigPaths.VERSION).equals("0.3.7")) {
                 return true;
-            } else {
-                return false;
+
             }
-        } else {
-            return false;
         }
+        return false;
     }
 }

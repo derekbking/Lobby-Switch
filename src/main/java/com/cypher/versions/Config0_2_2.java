@@ -29,11 +29,8 @@ public abstract class Config0_2_2 {
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.2.3") ||
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.3")) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 }

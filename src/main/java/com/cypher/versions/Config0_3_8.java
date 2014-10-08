@@ -21,11 +21,8 @@ public abstract class Config0_3_8 {
         if (fileConfiguration.contains(ConfigPaths.VERSION)) {
             if (fileConfiguration.getString(ConfigPaths.VERSION).equals("0.3.8")) {
                 return true;
-            } else {
-                return false;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 }
