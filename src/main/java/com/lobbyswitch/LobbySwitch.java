@@ -21,7 +21,7 @@ public class LobbySwitch extends JavaPlugin {
     public static LobbySwitch p;
     private FileConfiguration config;
     private ConfigManager configManager;
-    private ArrayList<String> servers;
+    private ArrayList<String> servers = new ArrayList<>();
 
     @Override
     public void onEnable() {
