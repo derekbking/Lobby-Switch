@@ -2,7 +2,7 @@ author: CombatTag
 description: LobbySwitch plugin
 main: com.lobbyswitch.LobbySwitch
 name: LobbySwitch
-version: 0.4
+version: 0.3.9
 commands:
   lobbyswitch:
     description: Lobby switch main command.
