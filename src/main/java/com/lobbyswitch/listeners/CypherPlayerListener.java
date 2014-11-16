@@ -18,6 +18,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Derek on 8/5/2014.
@@ -55,7 +56,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
                         byteArrayDataOutput.writeUTF("PlayerCount");
                         byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
-                        event.getPlayer().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
+                        event.getPlayer().sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
 
                         inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
                     }
@@ -67,7 +68,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
     @Override
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-        if (!channel.equals("BungeeCord")) {
+        if (!channel.equals(LobbySwitch.p.getPluginChannel())) {
             return;
         }
 
@@ -87,7 +88,11 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
                         if (serverItem.getTargetServer().equals(server)) {
                             ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
                             ItemMeta itemMeta = itemStack.getItemMeta();
-                            itemMeta.setLore(Arrays.asList(String.valueOf(playerCount) + " Online"));
+                            List<String> loreLines = new ArrayList<>();
+                            for (String loreLine : itemMeta.getLore()) {
+                                loreLines.add(loreLine.replace("%PLAYER_COUNT%", String.valueOf(playerCount)));
+                            }
+                            itemMeta.setLore(loreLines);
                             itemStack.setItemMeta(itemMeta);
                         }
                     }

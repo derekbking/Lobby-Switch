@@ -9,6 +9,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,10 +47,10 @@ public class ConfigManager {
         int amount;
         String displayName;
         String targetServer;
+        List<String> lore;
         if (getSlots().contains(String.valueOf(slot))) {
             amount = fileConfiguration.getInt(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_AMOUNT, slot));
             displayName = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_DISPLAY_NAME, slot));
-            displayName = displayName.replace("&", "\247");
             material = Material.valueOf(fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_MATERIAL, slot)));
             if (fileConfiguration.contains(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot))) {
                 metaData = Byte.valueOf(fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot)));
@@ -57,10 +58,11 @@ public class ConfigManager {
                 metaData = (byte) 0;
             }
             targetServer = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot));
+            lore = fileConfiguration.getStringList(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_LORE, slot));
         } else {
             return null;
         }
-        return new ServerItem(material, metaData, amount, displayName, targetServer);
+        return new ServerItem(material, metaData, amount, displayName, targetServer, lore);
     }
 
     public void saveServerItem(ServerItem serverItem, int slot) {
@@ -69,6 +71,7 @@ public class ConfigManager {
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_MATERIAL, slot), serverItem.getMaterial().name());
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot), String.valueOf(serverItem.getMetaData()));
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot), serverItem.getTargetServer());
+        fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_LORE, slot), serverItem.getLore());
         LobbySwitch.p.saveConfig();
     }
 

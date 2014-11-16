@@ -8,6 +8,7 @@ public abstract class ConfigPaths {
 
     public static final String SERVER_SLOTS = "Server_Slots";
     public static final String SERVER_SLOT = "Server_Slots.Slot";
+    public static final String SERVER_SLOT_LORE = "Server_Slots.Slot.Lore";
     public static final String SERVER_SLOT_MATERIAL = "Server_Slots.Slot.Material";
     public static final String SERVER_SLOT_METADATA = "Server_Slots.Slot.MetaData";
     public static final String SERVER_SLOT_AMOUNT = "Server_Slots.Slot.Amount";

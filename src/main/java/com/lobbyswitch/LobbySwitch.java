@@ -22,6 +22,7 @@ public class LobbySwitch extends JavaPlugin {
     private FileConfiguration config;
     private ConfigManager configManager;
     private ArrayList<String> servers = new ArrayList<>();
+    private String pluginChannel = "BungeeCord";
 
     @Override
     public void onEnable() {
@@ -29,8 +30,11 @@ public class LobbySwitch extends JavaPlugin {
         loadConfig();
         configManager = new ConfigManager(config);
         registerListener(Bukkit.getPluginManager());
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-        Bukkit.getMessenger().registerIncomingPluginChannel(this, "BungeeCord", new CypherPlayerListener());
+        if (getServer().getPluginManager().getPlugin("RedisBungee") != null) {
+            pluginChannel = "RedisBungee";
+        }
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, pluginChannel);
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, pluginChannel, new CypherPlayerListener());
         CommandManager.registerCommands();
     }
 
@@ -65,5 +69,9 @@ public class LobbySwitch extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
         config = getConfig();
+    }
+
+    public String getPluginChannel() {
+        return pluginChannel;
     }
 }

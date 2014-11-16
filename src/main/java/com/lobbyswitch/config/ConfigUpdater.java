@@ -1,10 +1,7 @@
 package com.lobbyswitch.config;
 
 import com.lobbyswitch.LobbySwitch;
-import com.lobbyswitch.versions.Config0_2_1;
-import com.lobbyswitch.versions.Config0_2_2;
-import com.lobbyswitch.versions.Config0_3_5;
-import com.lobbyswitch.versions.Config0_3_8;
+import com.lobbyswitch.versions.*;
 import org.bukkit.configuration.file.FileConfiguration;
 
 /**
@@ -28,6 +25,9 @@ public class ConfigUpdater {
         }
         if (Config0_3_5.equals(fileConfiguration)) {
             fileConfiguration = Config0_3_8.update(fileConfiguration);
+        }
+        if (Config0_3_8.equals(fileConfiguration)) {
+            fileConfiguration = Config0_4.update(fileConfiguration);
         }
         LobbySwitch.p.saveConfig();
     }

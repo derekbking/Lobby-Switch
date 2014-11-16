@@ -10,6 +10,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandLobbySwitch implements TabExecutor {
@@ -27,6 +28,7 @@ public class CommandLobbySwitch implements TabExecutor {
     private final List<String> editSubArguments = new ArrayList<String>() {
         {
             add("amount");
+            add("lore");
             add("material");
             add("name");
             add("slot");
@@ -112,7 +114,6 @@ public class CommandLobbySwitch implements TabExecutor {
                             return true;
                         }
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(slot);
-                        serverItem.setDisplayName(serverItem.getDisplayName().replace("\247", "&"));
                         switch (args[2].toLowerCase()) {
                             case "amount":
                                 int amount = Integer.parseInt(args[3]);
@@ -218,20 +219,20 @@ public class CommandLobbySwitch implements TabExecutor {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The target has been changed to " + ChatColor.GRAY + targetServer + ChatColor.RED + ".");
                                 return true;
                             default:
-                                if (!args[2].toLowerCase().equals("name")) {
+                                if (!(args[2].toLowerCase().equals("name") || args[2].toLowerCase().equals("lore"))) {
                                     commandSender.sendMessage(getInvalidFormat());
                                     return true;
                                 }
                         }
                     default:
-                        if (!args[2].toLowerCase().equals("name")) {
+                        if (!(args[2].toLowerCase().equals("name") || args[2].toLowerCase().equals("lore"))) {
                             commandSender.sendMessage(getInvalidFormat());
                             return true;
                         }
                 }
             default:
-                if (args.length > 3) {
-                    if (args[0].equals("edit") || args[0].equals("e")) {
+                if (args.length > 2) {
+                    if ((args[0].equals("edit") || args[0].equals("e")) && (args[2].equals("name") && args.length > 3)) {
                         int slot;
                         try {
                             slot = Integer.parseInt(args[1]);
@@ -252,21 +253,57 @@ public class CommandLobbySwitch implements TabExecutor {
                         }
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(slot);
 
-                        if (args[2].equals("name")) {
-                            StringBuilder stringBuilder = new StringBuilder();
+                        StringBuilder stringBuilder = new StringBuilder();
 
-                            for (int i = 3; args.length > i; i++) {
-                                if (i != 3) {
-                                    stringBuilder.append(" ");
-                                }
-                                stringBuilder.append(args[i]);
+                        for (int i = 3; args.length > i; i++) {
+                            if (i != 3) {
+                                stringBuilder.append(" ");
                             }
-                            serverItem.setDisplayName(stringBuilder.toString());
-                            LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
-                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The display name has been changed to " + ChatColor.GRAY + serverItem.getDisplayName() + ChatColor.RED + ".");
-                        } else {
-                            commandSender.sendMessage(getInvalidFormat());
+                            stringBuilder.append(args[i]);
                         }
+                        serverItem.setDisplayName(stringBuilder.toString());
+                        LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The display name has been changed to " + ChatColor.GRAY + serverItem.getDisplayName() + ChatColor.RED + ".");
+                        return true;
+                    } else if (args[2].equals("lore")) {
+                        int slot;
+                        try {
+                            slot = Integer.parseInt(args[1]);
+                            if (slot < 1) {
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> lore <New Lore>");
+                                return true;
+                            }
+                            if (slot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getConfigManager().getInventory().getSize() + ChatColor.RED + ".");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> lore <New Lore>");
+                                return true;
+                            }
+                        } catch (NumberFormatException e) {
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> lore <New Lore>");
+                            return true;
+                        }
+                        ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(slot);
+
+                        StringBuilder stringBuilder = new StringBuilder();
+
+                        for (int i = 3; args.length > i; i++) {
+                            if (i != 3) {
+                                stringBuilder.append(" ");
+                            }
+                            stringBuilder.append(args[i]);
+                        }
+
+                        serverItem.setLore(Arrays.asList(stringBuilder.toString().split("/n")));
+                        LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The lore has been changed to");
+                        for (String string : serverItem.getLore()) {
+                            commandSender.sendMessage(ChatColor.DARK_RED + "  " + PREFIX + ChatColor.WHITE + string.replace("&", "\247"));
+                        }
+                        return true;
+                    } else {
+                        commandSender.sendMessage(getInvalidFormat());
                         return true;
                     }
                 }
@@ -348,7 +385,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                 }
                                 stringBuilder.append(args[i]);
                             }
-                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getData().getData(), itemStack.getAmount(), stringBuilder.toString(), targetServer);
+                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getData().getData(), itemStack.getAmount(), stringBuilder.toString(), targetServer, new ArrayList<String>());
                             LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                             commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Slot " + ChatColor.GRAY + slot);
                             commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + serverItem.getAmount());
@@ -465,7 +502,7 @@ public class CommandLobbySwitch implements TabExecutor {
         return
                 ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Display Name>\n" +
-                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Material|Name|Slot|Target> <New Amount|New Material|New Name|New Slot|New Target>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Lore|Material|Name|Slot|Target> <New Amount|New Material|New Name|New Slot|New Target>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>";

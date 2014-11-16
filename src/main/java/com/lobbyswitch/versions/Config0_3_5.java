@@ -25,7 +25,7 @@ public abstract class Config0_3_5 {
         for (String string : serverList) {
             String[] split = string.split(":");
 
-            serverItems.put(Integer.parseInt(split[5]), new ServerItem(Material.valueOf(split[0]), (byte) 0, Integer.parseInt(split[1]), split[2], split[3]));
+            serverItems.put(Integer.parseInt(split[5]), new ServerItem(Material.valueOf(split[0]), (byte) 0, Integer.parseInt(split[1]), split[2], split[3], new ArrayList<String>()));
         }
         String version = fileConfiguration.getString(ConfigPaths.VERSION);
         fileConfiguration.set(ConfigPaths.INVENTORY_ROWS, rows);
