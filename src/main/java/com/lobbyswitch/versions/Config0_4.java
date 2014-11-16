@@ -27,7 +27,8 @@ public abstract class Config0_4 {
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.1") ||
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.2") ||
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.3") ||
-                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.4")) {
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.4") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.5")) {
                 return true;
             }
         }
