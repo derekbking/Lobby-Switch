@@ -14,7 +14,7 @@ public abstract class Config0_4 {
 
     public static FileConfiguration update(FileConfiguration fileConfiguration) {
         for (String string : fileConfiguration.getConfigurationSection(ConfigPaths.SERVER_SLOTS).getKeys(false)) {
-            List<String> lore = Arrays.asList(new String[]{"\2477%PLAYER_COUNT% \247cOnline"});
+            List<String> lore = Arrays.asList(new String[]{"&7%PLAYER_COUNT% &cOnline"});
             fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_LORE, Integer.valueOf(string)), lore);
         }
         fileConfiguration.set(ConfigPaths.VERSION, "0.4");
