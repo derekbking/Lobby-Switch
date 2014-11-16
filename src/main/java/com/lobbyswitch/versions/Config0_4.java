@@ -23,7 +23,11 @@ public abstract class Config0_4 {
 
     public static boolean equals(FileConfiguration fileConfiguration) {
         if (fileConfiguration.contains(ConfigPaths.VERSION)) {
-            if (fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4")) {
+            if (fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.1") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.2") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.3") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.4")) {
                 return true;
             }
         }
