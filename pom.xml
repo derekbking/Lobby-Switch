@@ -6,7 +6,7 @@
 
     <groupId>com.cypher</groupId>
     <artifactId>LobbySwitch</artifactId>
-    <version>0.4.3-SNAPSHOT</version>
+    <version>0.4.4-SNAPSHOT</version>
 
     <build>
         <plugins>

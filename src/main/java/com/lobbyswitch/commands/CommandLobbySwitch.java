@@ -219,20 +219,20 @@ public class CommandLobbySwitch implements TabExecutor {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The target has been changed to " + ChatColor.GRAY + targetServer + ChatColor.RED + ".");
                                 return true;
                             default:
-                                if (!(args[2].toLowerCase().equals("name") || args[2].toLowerCase().equals("lore"))) {
+                                if (!(args[2].equalsIgnoreCase("name") || args[2].equalsIgnoreCase("lore"))) {
                                     commandSender.sendMessage(getInvalidFormat());
                                     return true;
                                 }
                         }
                     default:
-                        if (!(args[2].toLowerCase().equals("name") || args[2].toLowerCase().equals("lore"))) {
+                        if (!(args[2].equalsIgnoreCase("name") || args[2].equalsIgnoreCase("lore"))) {
                             commandSender.sendMessage(getInvalidFormat());
                             return true;
                         }
                 }
             default:
                 if (args.length > 2) {
-                    if ((args[0].equals("edit") || args[0].equals("e")) && (args[2].equals("name") && args.length > 3)) {
+                    if ((args[0].equalsIgnoreCase("edit") || args[0].equalsIgnoreCase("e")) && (args[2].equalsIgnoreCase("name") && args.length > 3)) {
                         int slot;
                         try {
                             slot = Integer.parseInt(args[1]);
@@ -265,7 +265,7 @@ public class CommandLobbySwitch implements TabExecutor {
                         LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The display name has been changed to " + ChatColor.GRAY + serverItem.getDisplayName() + ChatColor.RED + ".");
                         return true;
-                    } else if (args[2].equals("lore")) {
+                    } else if (args[2].equalsIgnoreCase("lore")) {
                         int slot;
                         try {
                             slot = Integer.parseInt(args[1]);
@@ -305,7 +305,7 @@ public class CommandLobbySwitch implements TabExecutor {
                     }
                 }
                 if (args.length > 5) {
-                    if (args[0].equals("add") || args[0].equals("a")) {
+                    if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
                         ItemStack itemStack;
                         byte metaData;
                         int slot;
