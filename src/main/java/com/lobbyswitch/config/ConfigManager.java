@@ -34,7 +34,7 @@ public class ConfigManager {
     }
 
     public Inventory getInventory() {
-        return Bukkit.createInventory(null, 9 * fileConfiguration.getInt(ConfigPaths.INVENTORY_ROWS), fileConfiguration.getString(ConfigPaths.INVENTORY_NAME));
+        return Bukkit.createInventory(null, 9 * fileConfiguration.getInt(ConfigPaths.INVENTORY_ROWS), fileConfiguration.getString(ConfigPaths.INVENTORY_NAME).replace("&", "\247"));
     }
 
     public Set<String> getSlots() {
