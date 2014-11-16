@@ -302,9 +302,6 @@ public class CommandLobbySwitch implements TabExecutor {
                             commandSender.sendMessage(ChatColor.DARK_RED + "  " + PREFIX + ChatColor.WHITE + string.replace("&", "\247"));
                         }
                         return true;
-                    } else {
-                        commandSender.sendMessage(getInvalidFormat());
-                        return true;
                     }
                 }
                 if (args.length > 5) {

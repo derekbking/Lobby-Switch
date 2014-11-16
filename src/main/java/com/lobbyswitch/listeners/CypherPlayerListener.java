@@ -89,8 +89,10 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
                             ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
                             ItemMeta itemMeta = itemStack.getItemMeta();
                             List<String> loreLines = new ArrayList<>();
-                            for (String loreLine : itemMeta.getLore()) {
-                                loreLines.add(loreLine.replace("%PLAYER_COUNT%", String.valueOf(playerCount)));
+                            if (itemMeta.hasLore()) {
+                                for (String loreLine : itemMeta.getLore()) {
+                                    loreLines.add(loreLine.replace("%PLAYER_COUNT%", String.valueOf(playerCount)));
+                                }
                             }
                             itemMeta.setLore(loreLines);
                             itemStack.setItemMeta(itemMeta);
