@@ -24,8 +24,8 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>http://repo.md-5.net/content/repositories/snapshots/</url>
+            <id>uncnqrd</id>
+            <url>http://uncnqrd.com:8081/artifactory/ext-snapshot-local</url>
         </repository>
     </repositories>
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.7.9-R0.3-SNAPSHOT</version>
+            <version>1.8-R0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
