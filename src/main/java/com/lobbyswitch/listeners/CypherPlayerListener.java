@@ -52,13 +52,16 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
 
                     for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
-                        ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+                        if (serverItem != null) {
+                            if (LobbySwitch.p.getServers().contains(serverItem.getTargetServer())) {
+                                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
 
-                        byteArrayDataOutput.writeUTF("PlayerCount");
-                        byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
-                        event.getPlayer().sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
-
-                        inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
+                                byteArrayDataOutput.writeUTF("PlayerCount");
+                                byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
+                                event.getPlayer().sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
+                            }
+                            inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
+                        }
                     }
                     event.getPlayer().openInventory(inventory);
                 }
@@ -73,41 +76,43 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
         }
 
         try {
-            ByteArrayDataInput in = ByteStreams.newDataInput(message);
-            String subChannel = in.readUTF();
+            ByteArrayDataInput byteArrayDataInput = ByteStreams.newDataInput(message);
+            String subChannel = byteArrayDataInput.readUTF();
 
             if (subChannel.equals("PlayerCount")) {
-                String server = in.readUTF();
-                int playerCount = in.readInt();
-
                 if (player.getOpenInventory().getTopInventory().getName().equals(LobbySwitch.p.getConfigManager().getInventory().getName())) {
+                    String server = byteArrayDataInput.readUTF();
+                    int playerCount = byteArrayDataInput.readInt();
+
                     Inventory inventory = player.getOpenInventory().getTopInventory();
                     for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
 
                         if (serverItem.getTargetServer().equals(server)) {
                             ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
-                            ItemMeta itemMeta = itemStack.getItemMeta();
-                            List<String> loreLines = new ArrayList<>();
-                            if (itemMeta != null) {
-                                if (itemMeta.getLore() != null) {
-                                    for (String loreLine : itemMeta.getLore()) {
-                                        loreLines.add(loreLine.replace("%PLAYER_COUNT%", String.valueOf(playerCount)));
+                            if (itemStack != null) {
+                                ItemMeta itemMeta = itemStack.getItemMeta();
+                                if (itemMeta != null) {
+                                    List<String> loreLines = new ArrayList<>();
+                                    if (itemMeta.getLore() != null) {
+                                        for (String loreLine : itemMeta.getLore()) {
+                                            loreLines.add(loreLine.replace("%PLAYER_COUNT%", String.valueOf(playerCount)));
+                                        }
                                     }
+                                    itemMeta.setLore(loreLines);
+                                    itemStack.setItemMeta(itemMeta);
                                 }
                             }
-                            itemMeta.setLore(loreLines);
-                            itemStack.setItemMeta(itemMeta);
                         }
                     }
                 }
             }
 
-
             if (subChannel.equals("GetServers")) {
-                LobbySwitch.p.setServers(new ArrayList(Arrays.asList(in.readUTF().split(", "))));
+                LobbySwitch.p.setServers(new ArrayList(Arrays.asList(byteArrayDataInput.readUTF().split(", "))));
             }
         } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 }
