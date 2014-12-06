@@ -207,7 +207,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                 return true;
                             case "target":
                                 String targetServer;
-                                if (LobbySwitch.p.getServers().contains(args[3])) {
+                                if (LobbySwitch.p.getServers().keySet().contains(args[3])) {
                                     targetServer = args[3];
                                 } else {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid target server.");
@@ -367,7 +367,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
-                            if (LobbySwitch.p.getServers().contains(args[4])) {
+                            if (LobbySwitch.p.getServers().keySet().contains(args[4])) {
                                 targetServer = args[4];
                             } else {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[4] + ChatColor.RED + "\"" + " is not a valid target server.");
@@ -475,7 +475,7 @@ public class CommandLobbySwitch implements TabExecutor {
                     }
                 }
                 if (args[2].equalsIgnoreCase("target")) {
-                    for (String string : LobbySwitch.p.getServers()) {
+                    for (String string : LobbySwitch.p.getServers().keySet()) {
                         if (string.toLowerCase().startsWith(search)) {
                             matches.add(string);
                         }
@@ -485,7 +485,7 @@ public class CommandLobbySwitch implements TabExecutor {
         }
         if (args.length == 5) {
             if (args[0].equalsIgnoreCase("add") || args[0].equalsIgnoreCase("a")) {
-                for (String string : LobbySwitch.p.getServers()) {
+                for (String string : LobbySwitch.p.getServers().keySet()) {
                     if (string.toLowerCase().startsWith(search)) {
                         matches.add(string);
                     }

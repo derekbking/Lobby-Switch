@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Derek on 8/5/2014.
@@ -21,7 +21,7 @@ public class LobbySwitch extends JavaPlugin {
     public static LobbySwitch p;
     private FileConfiguration config;
     private ConfigManager configManager;
-    private ArrayList<String> servers = new ArrayList<>();
+    private HashMap<String, ServerData> servers = new HashMap<>();
     private String pluginChannel = "BungeeCord";
 
     @Override
@@ -46,12 +46,16 @@ public class LobbySwitch extends JavaPlugin {
         return configManager;
     }
 
-    public ArrayList<String> getServers() {
+    public HashMap<String, ServerData> getServers() {
         return servers;
     }
 
-    public void setServers(ArrayList<String> servers) {
-        this.servers = servers;
+    public void addServer(String server) {
+        if (!servers.containsKey(server)) {
+            ServerData serverData = new ServerData(server);
+            Bukkit.getMessenger().registerIncomingPluginChannel(this, pluginChannel, serverData);
+            servers.put(server, serverData);
+        }
     }
 
     private void registerListener(PluginManager pluginManager) {
