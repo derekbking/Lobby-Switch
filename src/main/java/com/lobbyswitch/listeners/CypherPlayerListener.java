@@ -4,7 +4,9 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.lobbyswitch.LobbySwitch;
+import com.lobbyswitch.ServerData;
 import com.lobbyswitch.ServerItem;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +19,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -53,14 +54,24 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
                     for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
                         if (serverItem != null) {
-                            if (LobbySwitch.p.getServers().contains(serverItem.getTargetServer())) {
-                                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-
-                                byteArrayDataOutput.writeUTF("PlayerCount");
-                                byteArrayDataOutput.writeUTF(serverItem.getTargetServer());
-                                event.getPlayer().sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
+                            ItemStack serverItemStack = serverItem.getItemStack();
+                            if (LobbySwitch.p.getServers().keySet().contains(serverItem.getTargetServer())) {
+                                ServerData serverData = LobbySwitch.p.getServers().get(serverItem.getTargetServer());
+                                if (serverItemStack.getItemMeta() != null) {
+                                    ItemMeta itemMeta = serverItemStack.getItemMeta();
+                                    List<String> loreLines = new ArrayList<>();
+                                    if (itemMeta.getLore() != null) {
+                                        for (String loreLine : itemMeta.getLore()) {
+                                            loreLine = loreLine.replace("%PLAYER_COUNT%", String.valueOf(serverData.getPlayerCount()));
+                                            loreLine = loreLine.replace("%TARGET_MOTD%", serverData.getMOTD());
+                                            loreLines.add(loreLine);
+                                        }
+                                    }
+                                    itemMeta.setLore(loreLines);
+                                    serverItemStack.setItemMeta(itemMeta);
+                                }
                             }
-                            inventory.setItem(Integer.parseInt(string) - 1, serverItem.getItemStack());
+                            inventory.setItem(Integer.parseInt(string) - 1, serverItemStack);
                         }
                     }
                     event.getPlayer().openInventory(inventory);
@@ -79,37 +90,10 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
             ByteArrayDataInput byteArrayDataInput = ByteStreams.newDataInput(message);
             String subChannel = byteArrayDataInput.readUTF();
 
-            if (subChannel.equals("PlayerCount")) {
-                if (player.getOpenInventory().getTopInventory().getName().equals(LobbySwitch.p.getConfigManager().getInventory().getName())) {
-                    String server = byteArrayDataInput.readUTF();
-                    int playerCount = byteArrayDataInput.readInt();
-
-                    Inventory inventory = player.getOpenInventory().getTopInventory();
-                    for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
-                        ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
-
-                        if (serverItem.getTargetServer().equals(server)) {
-                            ItemStack itemStack = inventory.getItem(Integer.parseInt(string) - 1);
-                            if (itemStack != null) {
-                                ItemMeta itemMeta = itemStack.getItemMeta();
-                                if (itemMeta != null) {
-                                    List<String> loreLines = new ArrayList<>();
-                                    if (itemMeta.getLore() != null) {
-                                        for (String loreLine : itemMeta.getLore()) {
-                                            loreLines.add(loreLine.replace("%PLAYER_COUNT%", String.valueOf(playerCount)));
-                                        }
-                                    }
-                                    itemMeta.setLore(loreLines);
-                                    itemStack.setItemMeta(itemMeta);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             if (subChannel.equals("GetServers")) {
-                LobbySwitch.p.setServers(new ArrayList(Arrays.asList(byteArrayDataInput.readUTF().split(", "))));
+                for (String server : byteArrayDataInput.readUTF().split(", ")) {
+                    LobbySwitch.p.addServer(server);
+                }
             }
         } catch (IllegalStateException e) {
             e.printStackTrace();
