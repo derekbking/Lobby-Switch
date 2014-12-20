@@ -1,6 +1,7 @@
 package com.lobbyswitch.config;
 
 import com.lobbyswitch.LobbySwitch;
+import com.lobbyswitch.ServerData;
 import com.lobbyswitch.ServerItem;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,6 +10,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +37,37 @@ public class ConfigManager {
     }
 
     public Inventory getInventory() {
-        return Bukkit.createInventory(null, 9 * fileConfiguration.getInt(ConfigPaths.INVENTORY_ROWS), fileConfiguration.getString(ConfigPaths.INVENTORY_NAME).replace("&", "\247"));
+        Inventory inventory = Bukkit.createInventory(null, 9 * fileConfiguration.getInt(ConfigPaths.INVENTORY_ROWS), fileConfiguration.getString(ConfigPaths.INVENTORY_NAME).replace("&", "\247"));
+
+        for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
+            ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
+            if (serverItem != null) {
+                ItemStack serverItemStack = serverItem.getItemStack();
+                if (LobbySwitch.p.getServers().keySet().contains(serverItem.getTargetServer())) {
+                    ServerData serverData = LobbySwitch.p.getServers().get(serverItem.getTargetServer());
+                    if (serverItemStack.getItemMeta() != null) {
+                        ItemMeta itemMeta = serverItemStack.getItemMeta();
+                        List<String> loreLines = new ArrayList<>();
+                        if (itemMeta.getLore() != null) {
+                            for (String loreLine : itemMeta.getLore()) {
+                                loreLine = loreLine.replace("%PLAYER_COUNT%", String.valueOf(serverData.getPlayerCount()));
+                                loreLine = loreLine.replace("%TARGET_MOTD%", serverData.getMOTD());
+                                if (loreLine.contains("\n")) {
+                                    loreLines.addAll(Arrays.asList(loreLine.split("\n")));
+                                } else {
+                                    loreLines.add(loreLine);
+                                }
+                            }
+                        }
+                        itemMeta.setLore(loreLines);
+                        serverItemStack.setItemMeta(itemMeta);
+                    }
+                }
+                inventory.setItem(Integer.parseInt(string) - 1, serverItemStack);
+            }
+        }
+
+        return inventory;
     }
 
     public Set<String> getSlots() {

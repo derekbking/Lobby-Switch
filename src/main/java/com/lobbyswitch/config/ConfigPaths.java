@@ -6,6 +6,11 @@ package com.lobbyswitch.config;
  */
 public abstract class ConfigPaths {
 
+    public static final String INVENTORY_ROWS = "Inventory.Rows";
+    public static final String INVENTORY_NAME = "Inventory.Name";
+
+    public static final String LORE_REFRESH_RATE = "Lore_Refresh_Rate";
+
     public static final String SERVER_SLOTS = "Server_Slots";
     public static final String SERVER_SLOT = "Server_Slots.Slot";
     public static final String SERVER_SLOT_LORE = "Server_Slots.Slot.Lore";
@@ -14,9 +19,6 @@ public abstract class ConfigPaths {
     public static final String SERVER_SLOT_AMOUNT = "Server_Slots.Slot.Amount";
     public static final String SERVER_SLOT_DISPLAY_NAME = "Server_Slots.Slot.Display_Name";
     public static final String SERVER_SLOT_TARGET_SERVER = "Server_Slots.Slot.Target_Server";
-
-    public static final String INVENTORY_ROWS = "Inventory.Rows";
-    public static final String INVENTORY_NAME = "Inventory.Name";
 
     public static final String SELECTOR_MATERIAL = "Selector.Material";
     public static final String SELECTOR_DISPLAY_NAME = "Selector.Display_Name";

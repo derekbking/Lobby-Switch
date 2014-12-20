@@ -49,32 +49,7 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
             ItemStack itemStack = event.getPlayer().getItemInHand();
             if (itemStack.getType() == LobbySwitch.p.getConfigManager().getSelector().getType()) {
                 if (itemStack.getItemMeta().getDisplayName().equals(LobbySwitch.p.getConfigManager().getSelector().getItemMeta().getDisplayName())) {
-                    Inventory inventory = LobbySwitch.p.getConfigManager().getInventory();
-
-                    for (String string : LobbySwitch.p.getConfigManager().getSlots()) {
-                        ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(Integer.parseInt(string));
-                        if (serverItem != null) {
-                            ItemStack serverItemStack = serverItem.getItemStack();
-                            if (LobbySwitch.p.getServers().keySet().contains(serverItem.getTargetServer())) {
-                                ServerData serverData = LobbySwitch.p.getServers().get(serverItem.getTargetServer());
-                                if (serverItemStack.getItemMeta() != null) {
-                                    ItemMeta itemMeta = serverItemStack.getItemMeta();
-                                    List<String> loreLines = new ArrayList<>();
-                                    if (itemMeta.getLore() != null) {
-                                        for (String loreLine : itemMeta.getLore()) {
-                                            loreLine = loreLine.replace("%PLAYER_COUNT%", String.valueOf(serverData.getPlayerCount()));
-                                            loreLine = loreLine.replace("%TARGET_MOTD%", serverData.getMOTD());
-                                            loreLines.add(loreLine);
-                                        }
-                                    }
-                                    itemMeta.setLore(loreLines);
-                                    serverItemStack.setItemMeta(itemMeta);
-                                }
-                            }
-                            inventory.setItem(Integer.parseInt(string) - 1, serverItemStack);
-                        }
-                    }
-                    event.getPlayer().openInventory(inventory);
+                    event.getPlayer().openInventory(LobbySwitch.p.getConfigManager().getInventory());
                 }
             }
         }

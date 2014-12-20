@@ -19,7 +19,7 @@ import java.util.List;
 public class ServerListPing {
 
     private InetSocketAddress host;
-    private int timeout = 150;
+    private int timeout = 1500;
     private Gson gson = new Gson();
 
     public void setAddress(InetSocketAddress host) {

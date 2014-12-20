@@ -14,7 +14,7 @@ public abstract class Config0_4 {
 
     public static FileConfiguration update(FileConfiguration fileConfiguration) {
         for (String string : fileConfiguration.getConfigurationSection(ConfigPaths.SERVER_SLOTS).getKeys(false)) {
-            List<String> lore = Arrays.asList(new String[]{"&7%PLAYER_COUNT% &cOnline"});
+            List<String> lore = Arrays.asList("&7%PLAYER_COUNT% &cOnline");
             fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_LORE, Integer.valueOf(string)), lore);
         }
         fileConfiguration.set(ConfigPaths.VERSION, "0.4");
@@ -29,7 +29,9 @@ public abstract class Config0_4 {
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.3") ||
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.4") ||
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.5") ||
-                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.6")) {
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.6") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.7") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.8")) {
                 return true;
             }
         }

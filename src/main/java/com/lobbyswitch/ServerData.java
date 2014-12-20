@@ -3,6 +3,8 @@ package com.lobbyswitch;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import com.lobbyswitch.config.ConfigPaths;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -28,8 +30,9 @@ public class ServerData implements PluginMessageListener {
             @Override
             public void run() {
                 updateData();
+                updateInventories();
             }
-        }.runTaskTimerAsynchronously(LobbySwitch.p, 0, 300);
+        }.runTaskTimerAsynchronously(LobbySwitch.p, 20, LobbySwitch.p.getConfig().getInt(ConfigPaths.LORE_REFRESH_RATE));
     }
 
     public void updateData() {
@@ -45,6 +48,18 @@ public class ServerData implements PluginMessageListener {
                 byteArrayDataOutput.writeUTF("PlayerCount");
                 byteArrayDataOutput.writeUTF(name);
                 player.sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
+            }
+        }
+    }
+
+    public void updateInventories() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.getOpenInventory() != null) {
+                if (player.getOpenInventory().getTopInventory() != null) {
+                    if (player.getOpenInventory().getTopInventory().getName().equals(LobbySwitch.p.getConfig().getString(ConfigPaths.INVENTORY_NAME))) {
+                        player.getOpenInventory().getTopInventory().setContents(LobbySwitch.p.getConfigManager().getInventory().getContents());
+                    }
+                }
             }
         }
     }
@@ -96,11 +111,7 @@ public class ServerData implements PluginMessageListener {
                 if (byteArrayDataInput.readUTF().equals(name)) {
                     ip = byteArrayDataInput.readUTF();
                     port = byteArrayDataInput.readShort();
-                    if (Short.toUnsignedInt(port) != LobbySwitch.p.getServer().getPort()) {
-                        MOTD = getNewMOTD();
-                    } else {
-                        MOTD = LobbySwitch.p.getServer().getMotd();
-                    }
+                    MOTD = getNewMOTD().replace("Â", "");
                 }
             }
 
