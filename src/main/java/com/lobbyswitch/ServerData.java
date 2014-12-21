@@ -32,7 +32,7 @@ public class ServerData implements PluginMessageListener {
                 updateData();
                 updateInventories();
             }
-        }.runTaskTimerAsynchronously(LobbySwitch.p, 20, LobbySwitch.p.getConfig().getInt(ConfigPaths.LORE_REFRESH_RATE));
+        }.runTaskTimerAsynchronously(LobbySwitch.p, 20, LobbySwitch.p.getConfig().getInt(ConfigPaths.MOTD_REFRESH_RATE));
     }
 
     public void updateData() {

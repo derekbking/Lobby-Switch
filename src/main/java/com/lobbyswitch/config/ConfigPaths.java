@@ -8,8 +8,8 @@ public abstract class ConfigPaths {
 
     public static final String INVENTORY_ROWS = "Inventory.Rows";
     public static final String INVENTORY_NAME = "Inventory.Name";
-
-    public static final String LORE_REFRESH_RATE = "Lore_Refresh_Rate";
+    public static final String LEGACY_LORE_REFRESH_RATE = "Lore_Refresh_Rate";
+    public static final String MOTD_REFRESH_RATE = "MOTD_Refresh_Rate";
 
     public static final String SERVER_SLOTS = "Server_Slots";
     public static final String SERVER_SLOT = "Server_Slots.Slot";

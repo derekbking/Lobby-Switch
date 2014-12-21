@@ -29,6 +29,9 @@ public class ConfigUpdater {
         if (Config0_3_8.equals(fileConfiguration)) {
             fileConfiguration = Config0_4.update(fileConfiguration);
         }
+        if(Config0_4.equals(fileConfiguration)) {
+            fileConfiguration = Config0_4_9.update(fileConfiguration);
+        }
         LobbySwitch.p.saveConfig();
     }
 }

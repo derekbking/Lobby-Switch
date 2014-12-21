@@ -1,7 +1,7 @@
 Inventory:
   Rows: 1
   Name: Server Selector
-Lore_Refresh_Rate: 300
+MOTD_Refresh_Rate: 300
 Selector:
   Material: COMPASS
   Display_Name: '&4Server Selector'
