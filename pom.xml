@@ -45,8 +45,8 @@
 
     <repositories>
         <repository>
-            <id>uncnqrd</id>
-            <url>http://uncnqrd.com:8081/artifactory/ext-snapshot-local</url>
+            <id>spigotmc</id>
+            <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
         </repository>
     </repositories>
 
