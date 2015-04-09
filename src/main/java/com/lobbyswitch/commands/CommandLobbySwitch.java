@@ -330,10 +330,10 @@ public class CommandLobbySwitch implements TabExecutor {
                                 metaData = (byte) 0;
                             }
                             try {
-                                itemStack = new ItemStack(Integer.parseInt(args[1]), amount, metaData);
+                                itemStack = new ItemStack(Integer.parseInt(itemStackSplit[0]), amount, metaData);
                             } catch (NumberFormatException e) {
                                 try {
-                                    itemStack = new ItemStack(Material.valueOf(args[1]), amount, metaData);
+                                    itemStack = new ItemStack(Material.valueOf(itemStackSplit[0]), amount, metaData);
                                 } catch (IllegalArgumentException exception) {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[1] + ChatColor.RED + "\"" + " is not a valid item name or id.");
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
