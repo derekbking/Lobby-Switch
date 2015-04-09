@@ -150,7 +150,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                     material = Material.getMaterial(Integer.parseInt(itemStackSplit[0]));
                                     if (material == null) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid item name or id.");
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <New Material>");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <ItemName|ItemID:MetaData>");
                                         return true;
                                     }
                                 } catch (NumberFormatException e) {
@@ -158,13 +158,13 @@ public class CommandLobbySwitch implements TabExecutor {
                                         material = Material.valueOf(itemStackSplit[0]);
                                     } catch (IllegalArgumentException exception) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid item name or id.");
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <New Material>");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <ItemName|ItemID:MetaData>");
                                         return true;
                                     }
                                 }
                                 if (material == Material.AIR) {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "AIR is not valid item name or id.");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <New Material>");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> material <ItemName|ItemID:MetaData>");
                                     return true;
                                 }
                                 serverItem.setMaterial(material);
@@ -499,7 +499,7 @@ public class CommandLobbySwitch implements TabExecutor {
         return
                 ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Display Name>\n" +
-                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Lore|Material|Name|Slot|Target> <New Amount|New Material|New Name|New Slot|New Target>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Lore|Material|Name|Slot|Target> <New Amount|ItemName|ItemID:MetaData|New Name|New Slot|New Target>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>";
