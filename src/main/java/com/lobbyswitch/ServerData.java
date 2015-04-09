@@ -39,15 +39,21 @@ public class ServerData implements PluginMessageListener {
         if (!LobbySwitch.p.getServer().getOnlinePlayers().isEmpty()) {
             Player player = (Player) LobbySwitch.p.getServer().getOnlinePlayers().toArray()[0];
             if (LobbySwitch.p.getServers().keySet().contains(name)) {
-                ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
-                byteArrayDataOutput.writeUTF("ServerIP");
-                byteArrayDataOutput.writeUTF(name);
-                player.sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
+                if (LobbySwitch.p.getServer().getName().equals(name)) {
+                    ip = LobbySwitch.p.getServer().getIp();
+                    port = (short) LobbySwitch.p.getServer().getPort();
+                    MOTD = getNewMOTD().replace("Â", "");
+                } else {
+                    ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+                    byteArrayDataOutput.writeUTF("ServerIP");
+                    byteArrayDataOutput.writeUTF(name);
+                    player.sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
 
-                byteArrayDataOutput = ByteStreams.newDataOutput();
-                byteArrayDataOutput.writeUTF("PlayerCount");
-                byteArrayDataOutput.writeUTF(name);
-                player.sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
+                    byteArrayDataOutput = ByteStreams.newDataOutput();
+                    byteArrayDataOutput.writeUTF("PlayerCount");
+                    byteArrayDataOutput.writeUTF(name);
+                    player.sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
+                }
             }
         }
     }
