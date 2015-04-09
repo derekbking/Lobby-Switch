@@ -315,12 +315,12 @@ public class CommandLobbySwitch implements TabExecutor {
                             int amount = Integer.parseInt(args[2]);
                             if (amount > 64) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount can't exceed " + ChatColor.GRAY + "64" + ChatColor.RED + ".");
-                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
                             if (amount < 1) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
-                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
                             String[] itemStackSplit = args[1].split(":");
@@ -335,36 +335,36 @@ public class CommandLobbySwitch implements TabExecutor {
                                 try {
                                     itemStack = new ItemStack(Material.valueOf(itemStackSplit[0]), amount, metaData);
                                 } catch (IllegalArgumentException exception) {
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[1] + ChatColor.RED + "\"" + " is not a valid item name or id.");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + itemStackSplit[1] + ChatColor.RED + "\"" + " is not a valid item name or id.");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
                                 }
                             }
                             if (itemStack.getType() == Material.AIR) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "AIR is not valid item name or id.");
-                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
                             try {
                                 slot = Integer.parseInt(args[3]);
                                 if (slot < 1) {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
                                 }
                                 if (slot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number must be less than or equal to " + ChatColor.GRAY + LobbySwitch.p.getConfigManager().getInventory().getSize() + ChatColor.RED + ".");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
                                 }
                                 if (LobbySwitch.p.getConfigManager().getSlots().contains(String.valueOf(slot))) {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The slot number " + ChatColor.GRAY + slot + ChatColor.RED + " is already being used.");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                     return true;
                                 }
                             } catch (NumberFormatException e) {
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
-                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                                commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                                 return true;
                             }
                             if (LobbySwitch.p.getServers().keySet().contains(args[4])) {
@@ -392,7 +392,7 @@ public class CommandLobbySwitch implements TabExecutor {
 
                         } catch (NumberFormatException e) {
                             commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[2] + ChatColor.RED + "\"" + " is not a valid integer.");
-                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Color> <Display Name>");
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Color> <Display Name>");
                             return true;
                         }
                         return true;
@@ -498,7 +498,7 @@ public class CommandLobbySwitch implements TabExecutor {
     private String getInvalidFormat() {
         return
                 ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Invalid command format\n" +
-                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID> <Amount> <Slot> <Target Server> <Display Name>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Display Name>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Lore|Material|Name|Slot|Target> <New Amount|New Material|New Name|New Slot|New Target>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>\n" +
