@@ -116,26 +116,30 @@ public class CommandLobbySwitch implements TabExecutor {
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(slot);
                         switch (args[2].toLowerCase()) {
                             case "amount":
-                                int amount;
+                                String amount;
                                 try {
-                                    amount = Integer.parseInt(args[3]);
+                                    amount = String.valueOf(Integer.parseInt(args[3]));
 
-                                    if (amount > 64) {
+                                    if (Integer.valueOf(amount) > 64) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount can't exceed " + ChatColor.GRAY + "64" + ChatColor.RED + ".");
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
                                         return true;
                                     }
-                                    if (amount < 1) {
+                                    if (Integer.valueOf(amount) < 1) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount must be greater than " + ChatColor.GRAY + "0" + ChatColor.RED + ".");
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
                                         return true;
                                     }
                                 } catch (NumberFormatException e) {
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[2] + ChatColor.RED + "\"" + " is not a valid integer.");
-                                    commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
-                                    return true;
+                                    if (args[3].equalsIgnoreCase("%PLAYER_COUNT%")) {
+                                        amount = "%PLAYER_COUNT%";
+                                    } else {
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[2] + ChatColor.RED + "\"" + " is not a valid integer.");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
+                                        return true;
+                                    }
                                 }
-                                serverItem.setAmount(String.valueOf(amount));
+                                serverItem.setAmount(amount);
                                 LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount has been changed to " + ChatColor.GRAY + amount + ChatColor.RED + ".");
                                 return true;
