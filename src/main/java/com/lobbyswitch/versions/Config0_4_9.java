@@ -19,7 +19,8 @@ public abstract class Config0_4_9 {
         if (fileConfiguration.contains(ConfigPaths.VERSION)) {
             if (fileConfiguration.getString(ConfigPaths.VERSION).equals("0.4.9") ||
                     fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5") ||
-                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5.1")) {
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5.1") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5.2")){
                 return true;
             }
         }
