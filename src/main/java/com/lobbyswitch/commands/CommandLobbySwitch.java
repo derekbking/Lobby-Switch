@@ -134,7 +134,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                     if (args[3].equalsIgnoreCase("%PLAYER_COUNT%")) {
                                         amount = "%PLAYER_COUNT%";
                                     } else {
-                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[2] + ChatColor.RED + "\"" + " is not a valid integer.");
+                                        commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The value \"" + ChatColor.GRAY + args[3] + ChatColor.RED + "\"" + " is not a valid integer.");
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
                                         return true;
                                     }
