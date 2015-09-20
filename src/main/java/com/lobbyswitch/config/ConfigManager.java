@@ -77,12 +77,12 @@ public class ConfigManager {
     public ServerItem getServerItem(int slot) {
         Material material;
         byte metaData;
-        int amount;
+        String amount;
         String displayName;
         String targetServer;
         List<String> lore;
         if (getSlots().contains(String.valueOf(slot))) {
-            amount = fileConfiguration.getInt(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_AMOUNT, slot));
+            amount = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_AMOUNT, slot));
             displayName = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_DISPLAY_NAME, slot));
             material = Material.valueOf(fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_MATERIAL, slot)));
             if (fileConfiguration.contains(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot))) {

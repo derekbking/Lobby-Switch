@@ -15,12 +15,12 @@ public class ServerItem {
 
     private Material material;
     private byte metaData;
-    private int amount;
+    private String amount;
     private String displayName;
     private String targetServer;
     private List<String> lore;
 
-    public ServerItem(Material material, byte metaData, int amount, String displayName, String targetServer, List<String> lore) {
+    public ServerItem(Material material, byte metaData, String amount, String displayName, String targetServer, List<String> lore) {
         this.material = material;
         this.metaData = metaData;
         this.amount = amount;
@@ -30,7 +30,15 @@ public class ServerItem {
     }
 
     public ItemStack getItemStack() {
-        ItemStack itemStack = new ItemStack(material, amount, metaData);
+        int intAmount;
+
+        try {
+            intAmount = Integer.valueOf(amount);
+        } catch(NumberFormatException e) {
+            intAmount = LobbySwitch.p.getServers().get(targetServer).getPlayerCount();
+        }
+
+        ItemStack itemStack = new ItemStack(material, intAmount, metaData);
         ItemMeta itemMeta = itemStack.getItemMeta();
 
         itemMeta.setDisplayName(displayName.replace("&", "\247"));
@@ -60,11 +68,11 @@ public class ServerItem {
         this.metaData = metaData;
     }
 
-    public int getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 

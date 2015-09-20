@@ -133,7 +133,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                     commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
                                     return true;
                                 }
-                                serverItem.setAmount(amount);
+                                serverItem.setAmount(String.valueOf(amount));
                                 LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                                 commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount has been changed to " + ChatColor.GRAY + amount + ChatColor.RED + ".");
                                 return true;
@@ -382,7 +382,7 @@ public class CommandLobbySwitch implements TabExecutor {
                                 }
                                 stringBuilder.append(args[i]);
                             }
-                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getData().getData(), itemStack.getAmount(), stringBuilder.toString(), targetServer, new ArrayList<String>());
+                            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getData().getData(), String.valueOf(itemStack.getAmount()), stringBuilder.toString(), targetServer, new ArrayList<String>());
                             LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                             commandSender.sendMessage("  " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + ChatColor.BOLD + "Slot " + ChatColor.GRAY + slot);
                             commandSender.sendMessage("    " + ChatColor.DARK_RED + PREFIX + ChatColor.RED + "Amount: " + ChatColor.GRAY + serverItem.getAmount());
