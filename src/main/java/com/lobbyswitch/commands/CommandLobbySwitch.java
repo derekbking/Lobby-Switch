@@ -116,8 +116,10 @@ public class CommandLobbySwitch implements TabExecutor {
                         ServerItem serverItem = LobbySwitch.p.getConfigManager().getServerItem(slot);
                         switch (args[2].toLowerCase()) {
                             case "amount":
-                                int amount = Integer.parseInt(args[3]);
+                                int amount;
                                 try {
+                                    amount = Integer.parseInt(args[3]);
+
                                     if (amount > 64) {
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "The amount can't exceed " + ChatColor.GRAY + "64" + ChatColor.RED + ".");
                                         commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch edit <Slot> amount <New Amount>");
