@@ -12,6 +12,7 @@ public abstract class Config0_4_9 {
     public static FileConfiguration update(FileConfiguration fileConfiguration) {
         fileConfiguration.set(ConfigPaths.MOTD_REFRESH_RATE, fileConfiguration.getInt(ConfigPaths.LEGACY_LORE_REFRESH_RATE));
         fileConfiguration.set(ConfigPaths.LEGACY_LORE_REFRESH_RATE, null);
+        fileConfiguration.set(ConfigPaths.VERSION, "0.4.9");
         return fileConfiguration;
     }
 
