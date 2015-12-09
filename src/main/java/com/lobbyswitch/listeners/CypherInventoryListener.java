@@ -22,7 +22,7 @@ public class CypherInventoryListener implements Listener {
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent event) {
         if (event.getClickedInventory() == event.getWhoClicked().getOpenInventory().getTopInventory()) {
-            if (event.getClickedInventory().getName().equals(LobbySwitch.p.getConfig().getString(ConfigPaths.INVENTORY_NAME))) {
+            if (event.getClickedInventory().getName().replace("\247", "&").equals(LobbySwitch.p.getConfig().getString(ConfigPaths.INVENTORY_NAME))) {
                 if (event.getInventory().getSize() >= event.getSlot() && event.getSlot() >= 0) {
                     ItemStack itemStack = event.getInventory().getItem(event.getSlot());
                     if (itemStack != null) {
