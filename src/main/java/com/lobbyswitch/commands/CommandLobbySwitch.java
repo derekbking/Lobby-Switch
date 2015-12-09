@@ -2,11 +2,13 @@ package com.lobbyswitch.commands;
 
 import com.lobbyswitch.LobbySwitch;
 import com.lobbyswitch.ServerItem;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ public class CommandLobbySwitch implements TabExecutor {
             add("add");
             add("edit");
             add("list");
+            add("open");
             add("remove");
             add("version");
         }
@@ -68,6 +71,15 @@ public class CommandLobbySwitch implements TabExecutor {
                 }
             case 2:
                 switch (args[0].toLowerCase()) {
+                    case "open":
+                    case "o":
+                        Player player = Bukkit.getPlayer(args[1]);
+
+                        if (player != null && player.isOnline()) {
+                            player.openInventory(LobbySwitch.p.getConfigManager().getInventory());
+                            commandSender.sendMessage(ChatColor.DARK_RED + PREFIX + ChatColor.RED + "You have successfully opened the selector inventory for " + ChatColor.GRAY + player.getName() + ChatColor.RED + ".");
+                        }
+                        return true;
                     case "remove":
                     case "r":
                         try {
@@ -428,6 +440,11 @@ public class CommandLobbySwitch implements TabExecutor {
                     }
                 }
             }
+            if (args[0].equalsIgnoreCase("open") || args[0].equals("o")) {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    matches.add(player.getName());
+                }
+            }
             if (args[0].equalsIgnoreCase("remove") || args[0].equalsIgnoreCase("r") || args[0].equalsIgnoreCase("edit") || args[0].equals("e")) {
                 matches.addAll(LobbySwitch.p.getConfigManager().getSlots());
             }
@@ -507,6 +524,7 @@ public class CommandLobbySwitch implements TabExecutor {
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <add|a> <ItemName|ItemID:MetaData> <Amount> <Slot> <Target Server> <Display Name>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <edit|e> <Slot> <Amount|Lore|Material|Name|Slot|Target> <New Amount|ItemName|ItemID:MetaData|New Name|New Slot|New Target>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <list|l>\n" +
+                        ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <open|o> <Player>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <remove|r> <Slot>\n" +
                         ChatColor.DARK_RED + PREFIX + ChatColor.RED + "/lobbyswitch <version|v>";
     }
