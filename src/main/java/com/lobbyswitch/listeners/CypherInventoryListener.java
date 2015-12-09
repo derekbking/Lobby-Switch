@@ -8,7 +8,9 @@ import com.lobbyswitch.config.ConfigPaths;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -39,6 +41,28 @@ public class CypherInventoryListener implements Listener {
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+
+        if (LobbySwitch.p.getConfigManager().getFileConfiguration().getBoolean(ConfigPaths.SELECTOR_SLOT_FORCED)) {
+            InventoryView inventoryView = event.getView();
+            ItemStack selector = LobbySwitch.p.getConfigManager().getSelector();
+            ItemStack affectedStack = inventoryView.getItem(event.getRawSlot());
+
+            if (affectedStack != null && affectedStack.equals(selector)) {
+                event.setCancelled(true);
+            } else if (event.getAction() == InventoryAction.HOTBAR_SWAP || event.getAction() == InventoryAction.HOTBAR_MOVE_AND_READD) {
+                affectedStack = inventoryView.getItem(event.getHotbarButton());
+
+                if (affectedStack != null && affectedStack.equals(selector)) {
+                    event.setCancelled(true);
+                } else {
+                    affectedStack = inventoryView.getBottomInventory().getItem(event.getHotbarButton());
+
+                    if (affectedStack != null && affectedStack.equals(selector)) {
+                        event.setCancelled(true);
                     }
                 }
             }

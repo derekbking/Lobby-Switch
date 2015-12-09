@@ -20,6 +20,10 @@ public abstract class ConfigPaths {
     public static final String SERVER_SLOT_DISPLAY_NAME = "Server_Slots.Slot.Display_Name";
     public static final String SERVER_SLOT_TARGET_SERVER = "Server_Slots.Slot.Target_Server";
 
+    public static final String ADD_ON_JOIN = "Selector.Add_On_Join";
+    public static final String SELECTOR_DROPPABLE = "Selector.Droppable";
+    public static final String SELECTOR_SLOT_FORCED = "Selector.Slot.Forced";
+    public static final String SELECTOR_SLOT_POSITION = "Selector.Slot.Position";
     public static final String SELECTOR_MATERIAL = "Selector.Material";
     public static final String SELECTOR_DISPLAY_NAME = "Selector.Display_Name";
 

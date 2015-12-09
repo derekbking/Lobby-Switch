@@ -25,7 +25,10 @@ public class ConfigManager {
 
     public ConfigManager(FileConfiguration fileConfiguration) {
         this.fileConfiguration = fileConfiguration;
+    }
 
+    public FileConfiguration getFileConfiguration() {
+        return fileConfiguration;
     }
 
     public ItemStack getSelector() {

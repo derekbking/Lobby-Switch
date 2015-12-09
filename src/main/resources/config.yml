@@ -3,6 +3,11 @@ Inventory:
   Name: Server Selector
 MOTD_Refresh_Rate: 300
 Selector:
+  Add_On_Join: true
+  Droppable: false
+  Slot:
+    Forced: false
+    Position: -1
   Material: COMPASS
   Display_Name: '&4Server Selector'
 Server_Slots: {}

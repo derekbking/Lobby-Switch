@@ -4,28 +4,35 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.lobbyswitch.LobbySwitch;
-import com.lobbyswitch.ServerData;
-import com.lobbyswitch.ServerItem;
-import org.bukkit.Server;
+import com.lobbyswitch.config.ConfigManager;
+import com.lobbyswitch.config.ConfigPaths;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Derek on 8/5/2014.
  * Time: 3:49 PM
  */
 public class CypherPlayerListener implements Listener, PluginMessageListener {
+
+    @EventHandler
+    public void onPlayerDropItem(PlayerDropItemEvent event) {
+        ConfigManager configManager = LobbySwitch.p.getConfigManager();
+
+        if (!configManager.getFileConfiguration().getBoolean(ConfigPaths.SELECTOR_DROPPABLE)) {
+            if (event.getItemDrop().getItemStack().equals(configManager.getSelector())) {
+                event.setCancelled(true);
+            }
+        }
+    }
 
     @EventHandler
     public void onPlayerJoin(final PlayerJoinEvent event) {
@@ -38,8 +45,20 @@ public class CypherPlayerListener implements Listener, PluginMessageListener {
             }
         }, 20);
 
-        if (!event.getPlayer().getInventory().contains(LobbySwitch.p.getConfigManager().getSelector())) {
-            event.getPlayer().getInventory().addItem(LobbySwitch.p.getConfigManager().getSelector());
+        FileConfiguration fileConfiguration = LobbySwitch.p.getConfigManager().getFileConfiguration();
+
+        if (fileConfiguration.getBoolean(ConfigPaths.ADD_ON_JOIN)) {
+            int slotPosition = fileConfiguration.getInt(ConfigPaths.SELECTOR_SLOT_POSITION);
+            ItemStack selector = LobbySwitch.p.getConfigManager().getSelector();
+
+            if (slotPosition == -1) {
+                if (!event.getPlayer().getInventory().contains(selector)) {
+                    event.getPlayer().getInventory().addItem(selector);
+                }
+            } else {
+                event.getPlayer().getInventory().remove(selector);
+                event.getPlayer().getInventory().setItem(slotPosition - 1, selector);
+            }
         }
     }
 
