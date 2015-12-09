@@ -1,6 +1,6 @@
 Inventory:
   Rows: 1
-  Name: Server Selector
+  Name: '&4Server Selector'
 MOTD_Refresh_Rate: 300
 Selector:
   Add_On_Join: true
