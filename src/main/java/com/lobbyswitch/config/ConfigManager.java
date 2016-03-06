@@ -114,6 +114,7 @@ public class ConfigManager {
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_METADATA, slot), String.valueOf(serverItem.getMetaData()));
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot), serverItem.getTargetServer());
         fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_LORE, slot), serverItem.getLore());
+        fileConfiguration.set(ConfigPaths.getSlotPath(ConfigPaths.SERVER_ENCHANTED, slot), serverItem.isEnchanted());
         LobbySwitch.p.saveConfig();
     }
 
