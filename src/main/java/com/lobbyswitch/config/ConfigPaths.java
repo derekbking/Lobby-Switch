@@ -13,6 +13,7 @@ public abstract class ConfigPaths {
 
     public static final String SERVER_SLOTS = "Server_Slots";
     public static final String SERVER_SLOT = "Server_Slots.Slot";
+    public static final String SERVER_ENCHANTED = "Server_Slots.Slot.Enchanted";
     public static final String SERVER_SLOT_LORE = "Server_Slots.Slot.Lore";
     public static final String SERVER_SLOT_MATERIAL = "Server_Slots.Slot.Material";
     public static final String SERVER_SLOT_METADATA = "Server_Slots.Slot.MetaData";
@@ -22,6 +23,7 @@ public abstract class ConfigPaths {
 
     public static final String ADD_ON_JOIN = "Selector.Add_On_Join";
     public static final String SELECTOR_DROPPABLE = "Selector.Droppable";
+    public static final String SELECTOR_ENCHANTED = "Server_Slots.Slot.Enchanted";
     public static final String SELECTOR_SLOT_FORCED = "Selector.Slot.Forced";
     public static final String SELECTOR_SLOT_POSITION = "Selector.Slot.Position";
     public static final String SELECTOR_MATERIAL = "Selector.Material";

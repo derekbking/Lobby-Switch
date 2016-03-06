@@ -45,16 +45,21 @@
 
     <repositories>
         <repository>
-            <id>spigotmc</id>
-            <url>https://hub.spigotmc.org/nexus/content/groups/public</url>
+            <id>uncnqrd</id>
+            <url>http://uncnqrd.com:8081/artifactory/development</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit</artifactId>
+            <version>1.9-R0.1-20160306.144313-1</version>
+        </dependency>
+        <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.9-R0.1-SNAPSHOT</version>
+            <version>1.9-R0.1-20160306.145239-1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

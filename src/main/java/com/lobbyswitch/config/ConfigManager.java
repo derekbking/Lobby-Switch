@@ -3,6 +3,7 @@ package com.lobbyswitch.config;
 import com.lobbyswitch.LobbySwitch;
 import com.lobbyswitch.ServerData;
 import com.lobbyswitch.ServerItem;
+import com.lobbyswitch.util.ItemUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -36,6 +37,9 @@ public class ConfigManager {
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(fileConfiguration.getString(ConfigPaths.SELECTOR_DISPLAY_NAME).replace("&", "\247"));
         itemStack.setItemMeta(itemMeta);
+        if (fileConfiguration.getBoolean(ConfigPaths.SELECTOR_ENCHANTED)) {
+            itemStack = ItemUtil.addGlow(itemStack);
+        }
         return itemStack;
     }
 
@@ -84,6 +88,7 @@ public class ConfigManager {
         String displayName;
         String targetServer;
         List<String> lore;
+        boolean enchanted;
         if (getSlots().contains(String.valueOf(slot))) {
             amount = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_AMOUNT, slot));
             displayName = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_DISPLAY_NAME, slot));
@@ -95,10 +100,11 @@ public class ConfigManager {
             }
             targetServer = fileConfiguration.getString(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_TARGET_SERVER, slot));
             lore = fileConfiguration.getStringList(ConfigPaths.getSlotPath(ConfigPaths.SERVER_SLOT_LORE, slot));
+            enchanted = fileConfiguration.getBoolean(ConfigPaths.getSlotPath(ConfigPaths.SERVER_ENCHANTED, slot));
         } else {
             return null;
         }
-        return new ServerItem(material, metaData, amount, displayName, targetServer, lore);
+        return new ServerItem(material, metaData, amount, displayName, targetServer, lore, enchanted);
     }
 
     public void saveServerItem(ServerItem serverItem, int slot) {

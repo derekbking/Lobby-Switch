@@ -20,12 +20,12 @@ public abstract class Config0_3_5 {
         String inventory_name = fileConfiguration.getString(ConfigPaths.OLD_INVENTORY_NAME);
         Material material = fileConfiguration.getItemStack(ConfigPaths.OLD_ITEMSTACK).getType();
         String selector_name = fileConfiguration.getItemStack(ConfigPaths.OLD_ITEMSTACK).getItemMeta().getDisplayName();
-        HashMap<Integer, ServerItem> serverItems = new HashMap<Integer, ServerItem>();
+        HashMap<Integer, ServerItem> serverItems = new HashMap<>();
         ArrayList<String> serverList = new ArrayList<String>(fileConfiguration.getStringList(ConfigPaths.OLD_SERVERS));
         for (String string : serverList) {
             String[] split = string.split(":");
 
-            serverItems.put(Integer.parseInt(split[5]), new ServerItem(Material.valueOf(split[0]), (byte) 0, String.valueOf(Integer.parseInt(split[1])), split[2], split[3], new ArrayList<String>()));
+            serverItems.put(Integer.parseInt(split[5]), new ServerItem(Material.valueOf(split[0]), (byte) 0, String.valueOf(Integer.parseInt(split[1])), split[2], split[3], new ArrayList<String>(), false));
         }
         String version = fileConfiguration.getString(ConfigPaths.VERSION);
         fileConfiguration.set(ConfigPaths.INVENTORY_ROWS, rows);
