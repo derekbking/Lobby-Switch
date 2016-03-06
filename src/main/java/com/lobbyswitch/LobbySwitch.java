@@ -1,15 +1,20 @@
 package com.lobbyswitch;
 
+import com.lobbyswitch.command.CommandManager;
 import com.lobbyswitch.config.ConfigManager;
 import com.lobbyswitch.config.ConfigUpdater;
 import com.lobbyswitch.listeners.CypherInventoryListener;
 import com.lobbyswitch.listeners.CypherPlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 /**
@@ -20,7 +25,9 @@ public class LobbySwitch extends JavaPlugin {
 
     public static LobbySwitch p;
     private FileConfiguration config;
+    private FileConfiguration messages;
     private ConfigManager configManager;
+    private CommandManager commandManager;
     private HashMap<String, ServerData> servers = new HashMap<>();
     private String pluginChannel = "BungeeCord";
 
@@ -29,13 +36,19 @@ public class LobbySwitch extends JavaPlugin {
         p = this;
         loadConfig();
         configManager = new ConfigManager(config);
+        commandManager = new CommandManager();
         registerListener(Bukkit.getPluginManager());
         if (getServer().getPluginManager().getPlugin("RedisBungee") != null) {
             pluginChannel = "RedisBungee";
         }
+        loadMessages();
+
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, pluginChannel);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, pluginChannel, new CypherPlayerListener());
-        CommandManager.registerCommands();
+    }
+
+    public FileConfiguration getMessages() {
+        return messages;
     }
 
     public FileConfiguration getFileConfig() {
@@ -44,6 +57,10 @@ public class LobbySwitch extends JavaPlugin {
 
     public ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public CommandManager getCommandManager() {
+        return commandManager;
     }
 
     public HashMap<String, ServerData> getServers() {
@@ -73,6 +90,15 @@ public class LobbySwitch extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
         config = getConfig();
+    }
+
+    private void loadMessages() {
+        try {
+            Reader messagesStream = new InputStreamReader(this.getResource("messages.yml"), "UTF8");
+            messages = YamlConfiguration.loadConfiguration(messagesStream);
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("An error has occurred while loading the plugin messages.");
+        }
     }
 
     public String getPluginChannel() {
