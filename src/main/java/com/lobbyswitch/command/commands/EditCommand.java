@@ -21,6 +21,7 @@ public class EditCommand implements ICommand {
     private final List<String> editSubArguments = new ArrayList<String>() {
         {
             add("amount");
+            add("enchanted");
             add("lore");
             add("material");
             add("name");
@@ -132,15 +133,16 @@ public class EditCommand implements ICommand {
 
                 if (!args[2].equalsIgnoreCase("true")) {
                     if (!args[2].equalsIgnoreCase("false")) {
-                        sender.sendMessage(t("invalidBoolean", args[1]));
+                        sender.sendMessage(t("invalidBoolean", args[2]));
                         return false;
                     }
                 }
 
-                enchanted = Boolean.parseBoolean(args[1]);
+                enchanted = Boolean.parseBoolean(args[2]);
                 serverItem.setEnchanted(enchanted);
                 LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
                 sender.sendMessage(t("setEnchanted", enchanted + ""));
+                return true;
             case "material":
                 Material material;
                 byte metaData;
@@ -286,6 +288,14 @@ public class EditCommand implements ICommand {
                     if (String.valueOf(i).toLowerCase().startsWith(search)) {
                         matches.add(String.valueOf(i));
                     }
+                }
+            }
+            if (args[1].equalsIgnoreCase("enchanted")) {
+                if ("true".startsWith(search)) {
+                    matches.add("true");
+                }
+                if ("false".startsWith(search)) {
+                    matches.add("false");
                 }
             }
             if (args[1].equalsIgnoreCase("material")) {
