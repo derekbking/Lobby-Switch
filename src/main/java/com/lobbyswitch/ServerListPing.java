@@ -151,14 +151,14 @@ public class ServerListPing {
 
 
     public class StatusResponse {
-        private String description;
+        private Description description;
         private Players players;
         private Version version;
         private String favicon;
         private int time;
 
         public String getDescription() {
-            return description;
+            return description.getText();
         }
 
         public Players getPlayers() {
@@ -181,6 +181,14 @@ public class ServerListPing {
             this.time = time;
         }
 
+    }
+
+    public class Description {
+        private String text;
+
+        public String getText() {
+            return text;
+        }
     }
 
     public class Players {
