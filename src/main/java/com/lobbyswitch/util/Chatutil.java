@@ -16,4 +16,11 @@ public class ChatUtil {
         }
         return message;
     }
+
+    public static String replaceLowerCasePlaceholder(String text, String toReplace, Object replaceWith) {
+        int startIndex = text.toLowerCase().indexOf(toReplace.toLowerCase());
+        int endIndex = startIndex + toReplace.length();
+
+        return startIndex == -1 ? text : text.substring(0, startIndex) + replaceWith + text.substring(endIndex, text.length());
+    }
 }

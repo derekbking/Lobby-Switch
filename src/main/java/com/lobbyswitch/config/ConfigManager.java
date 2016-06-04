@@ -3,6 +3,7 @@ package com.lobbyswitch.config;
 import com.lobbyswitch.LobbySwitch;
 import com.lobbyswitch.ServerData;
 import com.lobbyswitch.ServerItem;
+import com.lobbyswitch.util.ChatUtil;
 import com.lobbyswitch.util.ItemUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -54,11 +55,19 @@ public class ConfigManager {
                     ServerData serverData = LobbySwitch.p.getServers().get(serverItem.getTargetServer());
                     if (serverItemStack.getItemMeta() != null) {
                         ItemMeta itemMeta = serverItemStack.getItemMeta();
+
+                        String displayName = itemMeta.getDisplayName();
+
+                        displayName = ChatUtil.replaceLowerCasePlaceholder(displayName, "%PLAYER_COUNT%", serverData.getPlayerCount());
+                        displayName = ChatUtil.replaceLowerCasePlaceholder(displayName, "%TARGET_MOTD%", serverData.getMOTD());
+
+                        itemMeta.setDisplayName(displayName);
+
                         List<String> loreLines = new ArrayList<>();
                         if (itemMeta.getLore() != null) {
                             for (String loreLine : itemMeta.getLore()) {
-                                loreLine = loreLine.replace("%PLAYER_COUNT%", String.valueOf(serverData.getPlayerCount()));
-                                loreLine = loreLine.replace("%TARGET_MOTD%", serverData.getMOTD());
+                                loreLine = ChatUtil.replaceLowerCasePlaceholder(loreLine, "%PLAYER_COUNT%", serverData.getPlayerCount());
+                                loreLine = ChatUtil.replaceLowerCasePlaceholder(loreLine, "%TARGET_MOTD%", serverData.getMOTD());
                                 if (loreLine.contains("\n")) {
                                     loreLines.addAll(Arrays.asList(loreLine.split("\n")));
                                 } else {
