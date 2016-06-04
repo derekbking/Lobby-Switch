@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.lobbyswitch.util.ChatUtil.t;
+import static com.lobbyswitch.util.Chatutil.t;
 
 /**
  * Created by derek on 3/6/2016.

@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 import java.util.Map;
 
-import static com.lobbyswitch.util.ChatUtil.t;
+import static com.lobbyswitch.util.Chatutil.t;
 
 /**
  * Created by derek on 3/6/2016.
