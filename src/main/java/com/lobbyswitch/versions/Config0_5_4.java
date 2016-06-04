@@ -18,7 +18,8 @@ public abstract class Config0_5_4 {
 
     public static boolean equals(FileConfiguration fileConfiguration) {
         if (fileConfiguration.contains(ConfigPaths.VERSION)) {
-            if (fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5.4")){
+            if (fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5.4") ||
+                    fileConfiguration.getString(ConfigPaths.VERSION).equals("0.5.5")){
                 return true;
             }
         }
