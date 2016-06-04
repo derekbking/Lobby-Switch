@@ -6,7 +6,7 @@ import org.bukkit.command.*;
 
 import java.util.*;
 
-import static com.lobbyswitch.util.ChatUtil.t;
+import static com.lobbyswitch.util.ChatUtils.t;
 
 /**
  * Created by Derek on 2/16/2015.
