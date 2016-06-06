@@ -1,5 +1,7 @@
 package com.lobbyswitch;
 
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import com.lobbyswitch.command.CommandManager;
 import com.lobbyswitch.config.ConfigManager;
 import com.lobbyswitch.config.ConfigUpdater;
@@ -45,6 +47,17 @@ public class LobbySwitch extends JavaPlugin {
 
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, pluginChannel);
         Bukkit.getMessenger().registerIncomingPluginChannel(this, pluginChannel, new CypherPlayerListener());
+
+        if (!Bukkit.getOnlinePlayers().isEmpty()) {
+            LobbySwitch.p.getServer().getScheduler().scheduleSyncDelayedTask(LobbySwitch.p, new Runnable() {
+                @Override
+                public void run() {
+                    ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
+                    byteArrayDataOutput.writeUTF("GetServers");
+                    Bukkit.getOnlinePlayers().iterator().next().sendPluginMessage(LobbySwitch.p, "BungeeCord", byteArrayDataOutput.toByteArray());
+                }
+            }, 20);
+        }
     }
 
     public FileConfiguration getMessages() {
