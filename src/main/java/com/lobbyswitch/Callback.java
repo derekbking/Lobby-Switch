@@ -6,4 +6,6 @@ package com.lobbyswitch;
 public interface Callback<V> {
 
     void onSuccess(V value);
+
+    void onFailure();
 }

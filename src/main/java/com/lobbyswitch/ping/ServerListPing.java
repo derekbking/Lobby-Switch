@@ -1,20 +1,16 @@
-package com.lobbyswitch;
+package com.lobbyswitch.ping;
 
 import com.google.gson.Gson;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import com.google.gson.JsonSyntaxException;
+import com.lobbyswitch.ping.impl.StatusResponse1_8;
+import com.lobbyswitch.ping.impl.StatusResponse1_9;
+
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.List;
 
 /**
- *
- * @author zh32 <zh32 at zh32.de>
+ * Created by derek on 6/9/2016.
  */
 public class ServerListPing {
 
@@ -22,48 +18,7 @@ public class ServerListPing {
     private int timeout = 1500;
     private Gson gson = new Gson();
 
-    public void setAddress(InetSocketAddress host) {
-        this.host = host;
-    }
-
-    public InetSocketAddress getAddress() {
-        return this.host;
-    }
-
-    void setTimeout(int timeout) {
-        this.timeout = timeout;
-    }
-
-    int getTimeout() {
-        return this.timeout;
-    }
-
-    public int readVarInt(DataInputStream in) throws IOException {
-        int i = 0;
-        int j = 0;
-        while (true) {
-            int k = in.readByte();
-            i |= (k & 0x7F) << j++ * 7;
-            if (j > 5) throw new RuntimeException("VarInt too big");
-            if ((k & 0x80) != 128) break;
-        }
-        return i;
-    }
-
-    public void writeVarInt(DataOutputStream out, int paramInt) throws IOException {
-        while (true) {
-            if ((paramInt & 0xFFFFFF80) == 0) {
-                out.writeByte(paramInt);
-                return;
-            }
-
-            out.writeByte(paramInt & 0x7F | 0x80);
-            paramInt >>>= 7;
-        }
-    }
-
     public StatusResponse fetchData() throws IOException {
-
         Socket socket = new Socket();
         OutputStream outputStream;
         DataOutputStream dataOutputStream;
@@ -137,7 +92,14 @@ public class ServerListPing {
         }
         long pingtime = dataInputStream.readLong(); //read response
 
-        StatusResponse response = gson.fromJson(json, StatusResponse.class);
+        StatusResponse response;
+
+        try {
+            response = gson.fromJson(json, StatusResponse1_9.class);
+        } catch (JsonSyntaxException e) {
+            response = gson.fromJson(json, StatusResponse1_8.class);
+        }
+
         response.setTime((int) (now - pingtime));
 
         dataOutputStream.close();
@@ -149,90 +111,43 @@ public class ServerListPing {
         return response;
     }
 
-
-    public class StatusResponse {
-        private Description description;
-        private Players players;
-        private Version version;
-        private String favicon;
-        private int time;
-
-        public String getDescription() {
-            return description.getText();
+    public int readVarInt(DataInputStream in) throws IOException {
+        int i = 0;
+        int j = 0;
+        while (true) {
+            int k = in.readByte();
+            i |= (k & 0x7F) << j++ * 7;
+            if (j > 5) throw new RuntimeException("VarInt too big");
+            if ((k & 0x80) != 128) break;
         }
-
-        public Players getPlayers() {
-            return players;
-        }
-
-        public Version getVersion() {
-            return version;
-        }
-
-        public String getFavicon() {
-            return favicon;
-        }
-
-        public int getTime() {
-            return time;
-        }
-
-        public void setTime(int time) {
-            this.time = time;
-        }
-
+        return i;
     }
 
-    public class Description {
-        private String text;
+    public void writeVarInt(DataOutputStream out, int paramInt) throws IOException {
+        while (true) {
+            if ((paramInt & 0xFFFFFF80) == 0) {
+                out.writeByte(paramInt);
+                return;
+            }
 
-        public String getText() {
-            return text;
+            out.writeByte(paramInt & 0x7F | 0x80);
+            paramInt >>>= 7;
         }
     }
 
-    public class Players {
-        private int max;
-        private int online;
-        private List<Player> sample;
-
-        public int getMax() {
-            return max;
-        }
-
-        public int getOnline() {
-            return online;
-        }
-
-        public List<Player> getSample() {
-            return sample;
-        }
+    public void setAddress(InetSocketAddress host) {
+        this.host = host;
     }
 
-    public class Player {
-        private String name;
-        private String id;
-
-        public String getName() {
-            return name;
-        }
-
-        public String getId() {
-            return id;
-        }
-
+    public InetSocketAddress getAddress() {
+        return this.host;
     }
 
-    public class Version {
-        private String name;
-        private String protocol;
+    void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
 
-        public String getName() {
-            return name;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
+    int getTimeout() {
+        return this.timeout;
     }
 }

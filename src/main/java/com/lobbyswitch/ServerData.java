@@ -4,6 +4,8 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.lobbyswitch.config.ConfigPaths;
+import com.lobbyswitch.ping.ServerListPing;
+import com.lobbyswitch.ping.StatusResponse;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -26,7 +28,9 @@ public class ServerData implements PluginMessageListener {
     private String ip;
     private short port;
     private String MOTD = "Offline";
-    private int playerCount = 0;
+    private int playerCount;
+    private int maxPlayers;
+    private String version;
 
     public ServerData(String name) {
         this.name = name;
@@ -55,19 +59,23 @@ public class ServerData implements PluginMessageListener {
                     byteArrayDataOutput.writeUTF(name);
                     player.sendPluginMessage(LobbySwitch.p, LobbySwitch.p.getPluginChannel(), byteArrayDataOutput.toByteArray());
 
-                    getOnlinePlayers(new Callback<Integer>() {
+                    getServerListPing(new Callback<StatusResponse>() {
                         @Override
-                        public void onSuccess(Integer value) {
-                            playerCount = value;
+                        public void onSuccess(StatusResponse response) {
+                            playerCount = response.getPlayers().getOnline();
+                            maxPlayers = response.getPlayers().getMax();
+                            MOTD = response.getDescription().replace("Â", "");
+                            version = response.getVersion().getName();
+                        }
+
+                        @Override
+                        public void onFailure() {
+                            playerCount = 0;
+                            maxPlayers = 0;
+                            MOTD = "OFFLINE";
                         }
                     });
                 }
-                getNewMOTD(new Callback<String>() {
-                    @Override
-                    public void onSuccess(String value) {
-                        MOTD = value.replace("Â", "");
-                    }
-                });
             }
         }
     }
@@ -103,40 +111,19 @@ public class ServerData implements PluginMessageListener {
         return playerCount;
     }
 
-    private void getNewMOTD(final Callback<String> callback) {
+    private void getServerListPing(final Callback<StatusResponse> callback) {
         executorService.submit(new Runnable() {
             @Override
             public void run() {
-                String returnString;
                 ServerListPing serverListPing = new ServerListPing();
 
                 serverListPing.setAddress(new InetSocketAddress(ip, port));
-                try {
-                    ServerListPing.StatusResponse statusResponse = serverListPing.fetchData();
-                    returnString = statusResponse.getDescription();
-                } catch (IOException e) {
-                    returnString = "Offline";
-                }
-                callback.onSuccess(returnString);
-            }
-        });
-    }
 
-    private void getOnlinePlayers(final Callback<Integer> callback) {
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                int onlinePlayers;
-                ServerListPing serverListPing = new ServerListPing();
-
-                serverListPing.setAddress(new InetSocketAddress(ip, port));
                 try {
-                    ServerListPing.StatusResponse statusResponse = serverListPing.fetchData();
-                    onlinePlayers = statusResponse.getPlayers().getOnline();
+                    callback.onSuccess(serverListPing.fetchData());
                 } catch (IOException e) {
-                    onlinePlayers = 0;
+                    callback.onFailure();
                 }
-                callback.onSuccess(onlinePlayers);
             }
         });
     }
@@ -155,12 +142,6 @@ public class ServerData implements PluginMessageListener {
                 if (byteArrayDataInput.readUTF().equals(name)) {
                     ip = byteArrayDataInput.readUTF();
                     port = byteArrayDataInput.readShort();
-                    getNewMOTD(new Callback<String>() {
-                        @Override
-                        public void onSuccess(String value) {
-                            MOTD = value.replace("Â", "");
-                        }
-                    });
                 }
             }
         } catch (IllegalStateException e) {
