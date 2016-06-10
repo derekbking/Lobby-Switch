@@ -6,7 +6,7 @@
 
     <groupId>com.cypher</groupId>
     <artifactId>LobbySwitch</artifactId>
-    <version>0.5.6-SNAPSHOT</version>
+    <version>0.5.7-SNAPSHOT</version>
 
     <build>
         <plugins>
@@ -54,12 +54,12 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>craftbukkit</artifactId>
-            <version>1.9-R0.1-20160306.144313-1</version>
+            <version>1.10-R0.1-20160610.001246-1</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.9-R0.1-20160306.145239-1</version>
+            <version>1.10-R0.1-20160610.001238-1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
