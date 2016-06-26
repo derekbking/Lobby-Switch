@@ -1,8 +1,7 @@
 package com.lobbyswitch.util;
 
-import net.minecraft.server.v1_10_R1.NBTTagCompound;
-import net.minecraft.server.v1_10_R1.NBTTagList;
-import org.bukkit.craftbukkit.v1_10_R1.inventory.CraftItemStack;
+import com.lobbyswitch.util.versions.*;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -10,17 +9,27 @@ import org.bukkit.inventory.ItemStack;
  */
 public class ItemUtil {
 
-    public static ItemStack addGlow(ItemStack item){
-        net.minecraft.server.v1_10_R1.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
-        NBTTagCompound tag = null;
-        if (!nmsStack.hasTag()) {
-            tag = new NBTTagCompound();
-            nmsStack.setTag(tag);
+    private static IGlow iGlow;
+
+    static {
+        String version = Bukkit.getServer().getClass().getPackage().getName().replace(".",  ",").split(",")[3];
+
+        if (version.equals("v1_8_R1")) {
+            iGlow = new Glow1_8_R1();
+        } else if (version.equals("v1_8_R2")) {
+            iGlow = new Glow1_8_R2();
+        } else if (version.equals("v1_8_R3")) {
+            iGlow = new Glow1_8_R3();
+        } else if (version.equals("v1_9_R1")) {
+            iGlow = new Glow1_9_R1();
+        } else if (version.equals("v1_9_R2")) {
+            iGlow = new Glow1_9_R2();
+        } else {
+            iGlow = new Glow1_10_R1();
         }
-        if (tag == null) tag = nmsStack.getTag();
-        NBTTagList ench = new NBTTagList();
-        tag.set("ench", ench);
-        nmsStack.setTag(tag);
-        return CraftItemStack.asCraftMirror(nmsStack);
+    }
+
+    public static ItemStack addGlow(ItemStack item){
+        return iGlow.addGlow(item);
     }
 }

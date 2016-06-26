@@ -52,14 +52,39 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.10-R0.1-20160610.001246-1</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api-1.1.0</artifactId>
+            <version>1.10-R0.1-20160623.054702-1</version>
         </dependency>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.10-R0.1-20160610.001238-1</version>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-v1_8_R1</artifactId>
+            <version>1.8-R0.1-20160624.201745-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-v1_8_R2</artifactId>
+            <version>1.8.3-R0.1-20160625.194835-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-v1_8_R3</artifactId>
+            <version>1.8.8-R0.1-20160625.194915-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-v1_9_R1</artifactId>
+            <version>1.9-R0.1-20160625.201959-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-v1_9_R2</artifactId>
+            <version>1.9.4-R0.1-20160625.202212-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bukkit</groupId>
+            <artifactId>craftbukkit-v1_10_R1</artifactId>
+            <version>1.10-R0.1-20160625.202659-1</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
