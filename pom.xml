@@ -53,8 +53,8 @@
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api-1.1.0</artifactId>
-            <version>1.10-R0.1-20160623.054702-1</version>
+            <artifactId>spigot-api</artifactId>
+            <version>1.10-R0.1-20160610.001238-1</version>
         </dependency>
         <dependency>
             <groupId>org.bukkit</groupId>
