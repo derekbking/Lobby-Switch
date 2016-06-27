@@ -59,101 +59,106 @@ public class AddCommand implements ICommand {
         }
 
         ItemStack itemStack;
+        String amount = args[1];
         byte metaData;
         boolean enchanted;
         int slot;
         String targetServer;
 
         try {
-            int amount = Integer.parseInt(args[1]);
-            if (amount > 64) {
+            if (Integer.valueOf(amount) > 64) {
                 sender.sendMessage(t("amountMaxExceeded", "64"));
+
                 return false;
             }
-            if (amount < 1) {
+            if (Integer.valueOf(amount) < 1) {
                 sender.sendMessage(t("amountMinExceeded", "0"));
-                return false;
-            }
-
-            String[] itemStackSplit = args[0].split(":");
-            if (itemStackSplit.length > 1) {
-                metaData = Byte.valueOf(itemStackSplit[1]);
-            } else {
-                metaData = (byte) 0;
-            }
-
-            try {
-                itemStack = new ItemStack(Integer.parseInt(itemStackSplit[0]), amount, metaData);
-            } catch (NumberFormatException e) {
-                try {
-                    itemStack = new ItemStack(Material.valueOf(itemStackSplit[0]), amount, metaData);
-                } catch (IllegalArgumentException exception) {
-                    sender.sendMessage(t("invalidItem", itemStackSplit[1]));
-
-                    return false;
-                }
-            }
-            if (itemStack.getType() == Material.AIR) {
-                sender.sendMessage(t("invalidItem", "AIR"));
 
                 return false;
             }
-
-            if (!args[2].equalsIgnoreCase("true")) {
-                if (!args[2].equalsIgnoreCase("false")) {
-                    sender.sendMessage(t("invalidBoolean", args[2]));
-
-                    return false;
-                }
-            }
-
-            enchanted = Boolean.parseBoolean(args[2]);
-
-            try {
-                slot = Integer.parseInt(args[3]);
-                if (slot < 1) {
-                    sender.sendMessage(t("slotMinExceeded", "0"));
-
-                    return false;
-                }
-                if (slot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
-                    sender.sendMessage(t("slotMaxExceeded", LobbySwitch.p.getConfigManager().getInventory().getSize() + ""));
-
-                    return false;
-                }
-                if (LobbySwitch.p.getConfigManager().getSlots().contains(String.valueOf(slot))) {
-                    sender.sendMessage(t("slotInUse", slot + ""));
-
-                    return false;
-                }
-            } catch (NumberFormatException e) {
-                sender.sendMessage(t("invalidInteger", args[3]));
-                return true;
-            }
-            if (LobbySwitch.p.getServers().keySet().contains(args[4])) {
-                targetServer = args[4];
-            } else {
-                sender.sendMessage(t("invalidServer", args[4]));
-
-                return false;
-            }
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (int i = 5; args.length > i; i++) {
-                if (i != 5) {
-                    stringBuilder.append(" ");
-                }
-                stringBuilder.append(args[i]);
-            }
-            ServerItem serverItem = new ServerItem(itemStack.getType(), itemStack.getData().getData(), String.valueOf(itemStack.getAmount()), stringBuilder.toString(), targetServer, new ArrayList<String>(), enchanted);
-            LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
-            sender.sendMessage(t("itemCreated", slot + "", serverItem.getAmount(), serverItem.getDisplayName(), serverItem.getMaterial().toString(), serverItem.getTargetServer(), serverItem.isEnchanted() + ""));
-
         } catch (NumberFormatException e) {
-            sender.sendMessage(t("invalidInteger", args[1]));
+            if (!amount.equalsIgnoreCase("%PLAYER_COUNT%")) {
+                sender.sendMessage(t("invalidInteger", amount));
+
+                return false;
+            }
+        }
+
+        String[] itemStackSplit = args[0].split(":");
+        if (itemStackSplit.length > 1) {
+            metaData = Byte.valueOf(itemStackSplit[1]);
+        } else {
+            metaData = (byte) 0;
+        }
+
+        try {
+            itemStack = new ItemStack(Integer.parseInt(itemStackSplit[0]), 1);
+        } catch (NumberFormatException e) {
+            try {
+                itemStack = new ItemStack(Material.valueOf(itemStackSplit[0]), 1);
+            } catch (IllegalArgumentException exception) {
+                sender.sendMessage(t("invalidItem", itemStackSplit[1]));
+
+                return false;
+            }
+        }
+
+        if (itemStack.getType() == Material.AIR) {
+            sender.sendMessage(t("invalidItem", "AIR"));
+
             return false;
         }
+
+        if (!args[2].equalsIgnoreCase("true")) {
+            if (!args[2].equalsIgnoreCase("false")) {
+                sender.sendMessage(t("invalidBoolean", args[2]));
+
+                return false;
+            }
+        }
+
+        enchanted = Boolean.parseBoolean(args[2]);
+
+        try {
+            slot = Integer.parseInt(args[3]);
+            if (slot < 1) {
+                sender.sendMessage(t("slotMinExceeded", "0"));
+
+                return false;
+            }
+            if (slot > LobbySwitch.p.getConfigManager().getInventory().getSize()) {
+                sender.sendMessage(t("slotMaxExceeded", LobbySwitch.p.getConfigManager().getInventory().getSize() + ""));
+
+                return false;
+            }
+            if (LobbySwitch.p.getConfigManager().getSlots().contains(String.valueOf(slot))) {
+                sender.sendMessage(t("slotInUse", slot + ""));
+
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            sender.sendMessage(t("invalidInteger", args[3]));
+            return true;
+        }
+        if (LobbySwitch.p.getServers().keySet().contains(args[4])) {
+            targetServer = args[4];
+        } else {
+            sender.sendMessage(t("invalidServer", args[4]));
+
+            return false;
+        }
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        for (int i = 5; args.length > i; i++) {
+            if (i != 5) {
+                stringBuilder.append(" ");
+            }
+            stringBuilder.append(args[i]);
+        }
+        ServerItem serverItem = new ServerItem(itemStack.getType(), metaData, amount, stringBuilder.toString(), targetServer, new ArrayList<String>(), enchanted);
+        LobbySwitch.p.getConfigManager().saveServerItem(serverItem, slot);
+        sender.sendMessage(t("itemCreated", slot + "", serverItem.getAmount(), serverItem.getDisplayName(), serverItem.getMaterial().toString(), serverItem.getTargetServer(), serverItem.isEnchanted() + ""));
 
         return true;
     }
